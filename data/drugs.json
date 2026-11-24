@@ -2,9 +2,9 @@
   "_meta": {
     "name": "AI-MedCare 示範藥品知識庫",
     "developer": "CY團隊",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "updated": "2026-11-24",
-    "notice": "許可證字號、品名、劑型、藥品類別、申請商與製造廠為食藥署「全部藥品許可證」公開資料（2026-11-24 下載，每種成分選一個有效許可證作為代表產品）。藥品外觀（顏色、形狀、刻痕）與照片尚待匯入食藥署「藥品外觀」資料集，目前外觀仍為示意；健保代碼待串接健保署資料。臨床衛教內容為一般藥學知識摘要，正式上線前須由藥師審核。"
+    "notice": "許可證、品名、廠商資料來自食藥署「全部藥品許可證」資料集；顏色、形狀、刻痕、尺寸與外觀照片來自食藥署「藥品外觀」資料集（皆於 2026-11-24 下載，依政府資料開放授權條款第1版使用）。每種成分選一個有效許可證作為代表產品，同成分其他廠牌外觀可能不同。健保代碼待串接健保署資料；臨床衛教內容為一般藥學知識摘要，正式上線前須由藥師審核。"
   },
   "drugs": [
     {
@@ -21,7 +21,7 @@
         "white"
       ],
       "shape": "oblong",
-      "imprint": "PCM500",
+      "imprint": "P",
       "score": true,
       "klass": "解熱鎮痛劑",
       "groups": [
@@ -84,7 +84,11 @@
         "validUntil": "2031/09/13",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "19",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/38e1b5c6-3a40-4dec-b1e4-46d20c394742?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "ibuprofen",
@@ -99,9 +103,9 @@
       "color": [
         "white"
       ],
-      "shape": "oval",
-      "imprint": "IBU400",
-      "score": false,
+      "shape": "oblong",
+      "imprint": "",
+      "score": true,
       "klass": "非類固醇消炎止痛藥（NSAID）",
       "groups": [
         "nsaid",
@@ -167,7 +171,11 @@
         "validUntil": "2031/05/14",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "15",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/9789fc02-f117-4b11-8f41-eb8688d1a5bf?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "aspirin",
@@ -183,7 +191,7 @@
         "white"
       ],
       "shape": "round",
-      "imprint": "ASA100",
+      "imprint": "",
       "score": false,
       "klass": "抗血小板藥",
       "groups": [
@@ -248,7 +256,11 @@
         "validUntil": "2029/06/28",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "8",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/29e601c3-2783-4e64-8a53-8d93fed2ae9e?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "clopidogrel",
@@ -264,7 +276,7 @@
         "pink"
       ],
       "shape": "round",
-      "imprint": "CLP75",
+      "imprint": "75",
       "score": false,
       "klass": "抗血小板藥（P2Y12 抑制劑）",
       "groups": [
@@ -329,15 +341,19 @@
         "validUntil": "2030/07/03",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "1171",
+      "sizeMm": "8",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/1613c7f4-0a23-4190-a1f0-e5c6f1c76b6e?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "warfarin",
       "zh": "華法林",
       "en": "Warfarin",
-      "brand": "欣服寧 錠5毫克",
+      "brand": "“政德”可化凝錠 5 毫克",
       "strength": "5 mg",
-      "license": "衛署藥製字第052458號",
+      "license": "衛署藥製字第055271號",
       "nhi": "待串接健保署",
       "barcode": "4710000000055",
       "form": "tablet",
@@ -345,7 +361,7 @@
         "orange"
       ],
       "shape": "round",
-      "imprint": "WF5",
+      "imprint": "GP",
       "score": true,
       "klass": "口服抗凝血劑（維生素 K 拮抗劑）",
       "groups": [
@@ -400,18 +416,22 @@
         }
       ],
       "product": {
-        "zh": "欣服寧 錠5毫克",
-        "en": "Synfarin Tablets 5 mg",
+        "zh": "“政德”可化凝錠 5 毫克",
+        "en": "Cofarin tablets 5 mg“Gentle”",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
-        "ingredient": "WARFARIN SODIUM",
-        "applicant": "健喬信元醫藥生技股份有限公司",
-        "manufacturer": "健喬信元醫藥生技股份有限公司健喬廠",
+        "ingredient": "WARFARIN SODIUM CLATHRATE",
+        "applicant": "政德製藥股份有限公司",
+        "manufacturer": "政德製藥股份有限公司",
         "country": "TW",
-        "validUntil": "2030/01/15",
+        "validUntil": "2030/08/30",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "183 5",
+      "sizeMm": "8.2",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/692394b0-6543-42bc-951b-ed7f73f09859?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "amlodipine",
@@ -426,9 +446,9 @@
       "color": [
         "white"
       ],
-      "shape": "round",
-      "imprint": "AML5",
-      "score": false,
+      "shape": "octagon",
+      "imprint": "VLE",
+      "score": true,
       "klass": "降血壓藥（鈣離子通道阻斷劑）",
       "groups": [
         "antihypertensive",
@@ -493,7 +513,11 @@
         "validUntil": "2027/03/08",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "AML 5",
+      "sizeMm": "9",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/24f4b518-5e8c-4de0-8240-fadde708cee0?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "losartan",
@@ -506,11 +530,11 @@
       "barcode": "4710000000079",
       "form": "tablet",
       "color": [
-        "green"
+        "white"
       ],
       "shape": "oval",
-      "imprint": "LST50",
-      "score": false,
+      "imprint": "952",
+      "score": true,
       "klass": "降血壓藥（血管張力素受體阻斷劑 ARB）",
       "groups": [
         "antihypertensive",
@@ -575,7 +599,11 @@
         "validUntil": "2027/10/14",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "11",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/e432dd81-fd81-4ab1-9ce1-afc0f42b6bf2?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "metformin",
@@ -591,7 +619,7 @@
         "white"
       ],
       "shape": "oblong",
-      "imprint": "MET500",
+      "imprint": "SYN 500",
       "score": true,
       "klass": "口服降血糖藥（雙胍類）",
       "groups": [
@@ -655,7 +683,11 @@
         "validUntil": "2030/03/14",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "16",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/8efc000b-7b96-429b-955a-99a7c01218ca?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "atorvastatin",
@@ -670,8 +702,8 @@
       "color": [
         "white"
       ],
-      "shape": "oval",
-      "imprint": "ATV20",
+      "shape": "round",
+      "imprint": "ATV",
       "score": false,
       "klass": "降血脂藥（HMG-CoA 還原酶抑制劑，Statin）",
       "groups": [
@@ -735,7 +767,11 @@
         "validUntil": "2030/05/15",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "20",
+      "sizeMm": "7",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/3ce30fb2-6e31-4f91-a824-76c77b454f9e?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "simvastatin",
@@ -748,10 +784,10 @@
       "barcode": "4710000000109",
       "form": "tablet",
       "color": [
-        "pink"
+        "orange"
       ],
       "shape": "oval",
-      "imprint": "SIM20",
+      "imprint": "STD",
       "score": false,
       "klass": "降血脂藥（Statin）",
       "groups": [
@@ -815,7 +851,11 @@
         "validUntil": "2030/06/10",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "146",
+      "sizeMm": "11.2",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/7c2ac904-8a54-4d19-ada3-d9b9e4ff3cd3?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "omeprazole",
@@ -828,11 +868,11 @@
       "barcode": "4710000000116",
       "form": "capsule",
       "color": [
-        "purple",
+        "red",
         "pink"
       ],
       "shape": "capsule",
-      "imprint": "OMP20",
+      "imprint": "A OM",
       "score": false,
       "klass": "制酸劑（氫離子幫浦抑制劑 PPI）",
       "groups": [
@@ -896,7 +936,11 @@
         "validUntil": "2030/03/17",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "20",
+      "sizeMm": "18",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/77ebcf56-9826-480a-acbd-888d9ec48d41?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "allopurinol",
@@ -912,7 +956,7 @@
         "white"
       ],
       "shape": "round",
-      "imprint": "ALP100",
+      "imprint": "SYNORID SYG",
       "score": true,
       "klass": "降尿酸藥（黃嘌呤氧化酶抑制劑）",
       "groups": [
@@ -975,7 +1019,11 @@
         "validUntil": "2028/04/13",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "9",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/c47c59dc-5ecd-4149-8ba6-30a8b1c62b59?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "digoxin",
@@ -991,8 +1039,8 @@
         "white"
       ],
       "shape": "round",
-      "imprint": "DGX25",
-      "score": true,
+      "imprint": "DO25",
+      "score": false,
       "klass": "強心劑（毛地黃配醣體）",
       "groups": [
         "cardiac"
@@ -1055,7 +1103,11 @@
         "validUntil": "2028/05/11",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "7",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/03811180-98ba-4590-add5-adc00176cdea?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "levothyroxine",
@@ -1071,8 +1123,8 @@
         "white"
       ],
       "shape": "round",
-      "imprint": "LT50",
-      "score": true,
+      "imprint": "GS 11E",
+      "score": false,
       "klass": "甲狀腺荷爾蒙",
       "groups": [
         "thyroid"
@@ -1132,7 +1184,11 @@
         "validUntil": "2031/10/24",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "50",
+      "sizeMm": "6",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/2bfdd85b-10c9-4eb1-b52d-27daf5b98f4b?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     },
     {
       "id": "amoxicillin",
@@ -1145,11 +1201,11 @@
       "barcode": "4710000000154",
       "form": "capsule",
       "color": [
-        "yellow",
-        "red"
+        "orange",
+        "white"
       ],
       "shape": "capsule",
-      "imprint": "AMX500",
+      "imprint": "CCP B32",
       "score": false,
       "klass": "抗生素（盤尼西林類）",
       "groups": [
@@ -1214,7 +1270,11 @@
         "validUntil": "2028/08/28",
         "source": "衛生福利部食品藥物管理署 全部藥品許可證資料集（政府資料開放平臺，2026-11-24 下載）"
       },
-      "appearanceVerified": false
+      "appearanceVerified": true,
+      "imprint2": "",
+      "sizeMm": "22.1",
+      "image": "https://mcp.fda.gov.tw/insert/shapeImg/5e7b1102-bbb6-4e29-9d67-0a948dc3b799?c=o",
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
     }
   ],
   "interactions": [

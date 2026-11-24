@@ -66,7 +66,7 @@ class ChatRequest(BaseModel):
 
 
 # ---------- core logic (mirrors the frontend engine) ----------
-NEAR = {"round": {"oval"}, "oval": {"round", "oblong"}, "oblong": {"oval", "capsule"}, "capsule": {"oblong"}}
+NEAR = {"round": {"oval", "octagon"}, "octagon": {"round"}, "oval": {"round", "oblong"}, "oblong": {"oval", "capsule"}, "capsule": {"oblong"}}
 
 
 def match_drugs(f: Features, top_k: int = 3) -> list[dict]:
@@ -87,19 +87,22 @@ def match_drugs(f: Features, top_k: int = 3) -> list[dict]:
         if f.form == d["form"]:
             score += 10
         if imp:
-            di = d["imprint"].upper()
-            if di == imp:
+            norm = lambda x: re.sub(r"[^A-Z0-9]", "", (x or "").upper())
+            a, b = norm(d.get("imprint")), norm(d.get("imprint2"))
+            best = 0.0
+            for di in [x for x in (a, b, a + b, b + a) if x]:
+                if di == imp:
+                    best = 1.0
+                    break
+                common = sum(1 for p, q in zip(di, imp) if p == q)
+                r = common / max(len(di), len(imp))
+                best = max(best, r * 0.7 if r >= 0.5 else 0, 0.5 if (di in imp or imp in di) and min(len(di), len(imp)) >= 2 else 0)
+            if best == 1.0:
                 score += 30
                 why.append("刻痕完全相符")
-            else:
-                common = sum(1 for a, b in zip(di, imp) if a == b)
-                r = common / max(len(di), len(imp))
-                if r >= 0.5:
-                    score += 30 * r * 0.7
-                    why.append("刻痕部分相符")
-                elif di in imp or imp in di:
-                    score += 15
-                    why.append("刻痕部分相符")
+            elif best > 0:
+                score += 30 * best
+                why.append("刻痕部分相符")
         max_score = 100 if imp else 70
         results.append({"id": d["id"], "zh": d["zh"], "en": d["en"], "strength": d["strength"],
                         "license": d["license"], "score": round(score / max_score * 100), "matched": why})
@@ -243,7 +246,8 @@ def fhir_medication_knowledge(drug_id: str):
         "drugCharacteristic": [
             {"type": {"text": "color"}, "valueString": "/".join(d["color"])},
             {"type": {"text": "shape"}, "valueString": d["shape"]},
-            {"type": {"text": "imprint-code"}, "valueString": d["imprint"]},
+            {"type": {"text": "imprint-code"}, "valueString": " / ".join(x for x in (d.get("imprint"), d.get("imprint2")) if x)},
+            {"type": {"text": "image"}, "valueAttachment": {"url": d.get("image", "")}},
         ],
         "regulatory": [{"regulatoryAuthority": {"display": "衛生福利部食品藥物管理署"}, "substitution": [], "schedule": [{"schedule": {"text": d["license"]}}]}],
     }

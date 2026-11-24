@@ -123,6 +123,10 @@ th{font-weight:700;color:var(--muted);font-size:.8rem;letter-spacing:.04em}
 .preview canvas{max-height:240px;object-fit:contain}
 .cand.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 .pill{width:56px;height:56px;display:block}
+.pimg{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;overflow:hidden;background:#fff;flex:none}
+.pimg img{width:100%;height:100%;object-fit:contain}
+.pimg .pill{width:100%;height:100%}
+.photo{max-width:min(100%,320px);border-radius:10px;border:1px solid var(--line);background:#fff}
 .bar-meter{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden;width:110px}
 .bar-meter i{display:block;height:100%;background:var(--accent)}
 .edu{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
@@ -215,7 +219,8 @@ function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTim
 /* ---------- vocab ---------- */
 const COLORS={white:"白色",yellow:"黃色",orange:"橘色",pink:"粉紅色",red:"紅色",brown:"棕色",green:"綠色",blue:"藍色",purple:"紫色",grey:"灰色",black:"黑色"};
 const SWATCH={white:"#f7f7f2",yellow:"#f4d03f",orange:"#f0a35e",pink:"#f2a7b8",red:"#d64541",brown:"#8d6748",green:"#6fbf73",blue:"#5b8fd9",purple:"#9b72cf",grey:"#a0a4a8",black:"#333"};
-const SHAPES={round:"圓形",oval:"橢圓形",oblong:"長橢圓形",capsule:"膠囊形",other:"其他"};
+const SHAPES={round:"圓形",oval:"橢圓形",oblong:"長橢圓形",octagon:"八邊形",capsule:"膠囊形",other:"其他"};
+const impText=d=>[d.imprint,d.imprint2].filter(Boolean).join(" / ")||"無";
 const FORMS={tablet:"錠劑",capsule:"膠囊",other:"其他（藥水、外用等）"};
 const LEVEL={major:["嚴重","danger"],moderate:["中度","warn"],minor:["輕度",""]};
 
@@ -225,11 +230,16 @@ function pillSVG(d,size=56){
   let shape;
   if(d.shape==="capsule"||d.form==="capsule") shape=`<clipPath id="cl${d.id}"><rect x="6" y="18" width="44" height="20" rx="10"/></clipPath><g clip-path="url(#cl${d.id})"><rect x="6" y="18" width="22" height="20" fill="${c1}"/><rect x="28" y="18" width="22" height="20" fill="${c2}"/></g><rect x="6" y="18" width="44" height="20" rx="10" fill="none" stroke="${stroke}"/>`;
   else if(d.shape==="round") shape=`<circle cx="28" cy="28" r="19" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="13" y1="28" x2="43" y2="28" stroke="${stroke}"/>`:""}`;
+  else if(d.shape==="octagon"){const pts=[...Array(8)].map((_,i)=>{const a=Math.PI/8+i*Math.PI/4;return (28+20*Math.cos(a)).toFixed(1)+","+(28+20*Math.sin(a)).toFixed(1)}).join(" ");shape=`<polygon points="${pts}" fill="${c1}" stroke="${stroke}"/>`}
   else if(d.shape==="oval") shape=`<ellipse cx="28" cy="28" rx="23" ry="15" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="28" y1="14" x2="28" y2="42" stroke="${stroke}"/>`:""}`;
   else shape=`<rect x="4" y="17" width="48" height="22" rx="11" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="28" y1="17" x2="28" y2="39" stroke="${stroke}"/>`:""}`;
-  return `<svg class="pill" width="${size}" height="${size}" viewBox="0 0 56 56" role="img" aria-label="${esc(d.zh)} 外觀示意"><title>外觀示意圖（非官方照片）</title>${shape}<text x="28" y="${d.shape==="round"?33:31}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" font-weight="600" fill="rgba(0,0,0,.55)">${esc(d.imprint)}</text></svg>`;
+  return `<svg class="pill" width="${size}" height="${size}" viewBox="0 0 56 56" role="img" aria-label="${esc(d.zh)} 外觀示意"><title>外觀示意圖</title>${shape}<text x="28" y="${d.shape==="round"||d.shape==="octagon"?33:31}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" font-weight="600" fill="rgba(0,0,0,.55)">${esc(d.imprint)}</text></svg>`;
 }
 
+function drugImg(d,size=56){
+  if(!d.image)return pillSVG(d,size);
+  return `<span class="pimg" style="width:${size}px;height:${size}px"><img src="${esc(d.image)}" alt="${esc(d.zh)} 官方外觀照片" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">${pillSVG(d,size).replace("<svg ","<svg hidden ")}</span>`;
+}
 /* ---------- navigation ---------- */
 const ICON={
  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2"/>',
@@ -360,13 +370,16 @@ function matchDrugs(f){
     const dc=d.color, fc=f.colors||[];
     const colorHit=fc.filter(c=>dc.includes(c)).length; const cs=fc.length?colorHit/Math.max(fc.length,dc.length):0;
     s+=35*cs; if(cs>0)why.push("顏色");
-    const near={round:["oval"],oval:["round","oblong"],oblong:["oval","capsule"],capsule:["oblong"]};
+    const near={round:["oval","octagon"],octagon:["round"],oval:["round","oblong"],oblong:["oval","capsule"],capsule:["oblong"]};
     if(f.shape===d.shape){s+=25;why.push("形狀")}else if((near[f.shape]||[]).includes(d.shape))s+=10;
     if(f.form===d.form){s+=10}
-    if(imp){const di=d.imprint.toUpperCase();
-      if(di===imp){s+=30;why.push("刻痕完全相符")}
-      else{let common=0;for(let i=0;i<Math.min(di.length,imp.length);i++)if(di[i]===imp[i])common++;
-        const r=common/Math.max(di.length,imp.length); if(r>=.5){s+=30*r*.7;why.push("刻痕部分相符")} else if(di.includes(imp)||imp.includes(di)){s+=15;why.push("刻痕部分相符")}}}
+    if(imp){const norm=x=>(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+      const cands=[norm(d.imprint),norm(d.imprint2),norm(d.imprint)+norm(d.imprint2),norm(d.imprint2)+norm(d.imprint)].filter(Boolean);
+      let best=0;
+      for(const di of cands){ if(di===imp){best=1;break}
+        let common=0;for(let i=0;i<Math.min(di.length,imp.length);i++)if(di[i]===imp[i])common++;
+        const r=common/Math.max(di.length,imp.length); best=Math.max(best,r>=.5?r*.7:0,(di.includes(imp)||imp.includes(di))&&Math.min(di.length,imp.length)>=2?.5:0)}
+      if(best===1){s+=30;why.push("刻痕完全相符")}else if(best>0){s+=30*best;why.push("刻痕部分相符")}}
     const max=imp?100:70;
     return {d,score:Math.round(s/max*100),why};
   }).sort((a,b)=>b.score-a.score);
@@ -382,11 +395,12 @@ function sampleImage(id,bgDark=true){
   c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=14;c.shadowOffsetY=6;
   c.beginPath();
   if(d.shape==="round")c.arc(0,0,62,0,Math.PI*2);
+  else if(d.shape==="octagon"){for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4;c[i?"lineTo":"moveTo"](66*Math.cos(a),66*Math.sin(a))}c.closePath()}
   else if(d.shape==="oval")c.ellipse(0,0,86,56,0,0,Math.PI*2);
   else c.roundRect(-112,-42,224,84,42);
   c.fillStyle=c1;c.fill();c.shadowColor="transparent";
   if(d.color[1]){c.save();c.clip();c.fillStyle=c2;c.fillRect(0,-60,140,120);c.restore()}
-  c.fillStyle="rgba(0,0,0,.42)";c.font="600 22px 'IBM Plex Mono',monospace";c.textAlign="center";c.textBaseline="middle";c.fillText(d.imprint,0,0);
+  c.fillStyle="rgba(0,0,0,.42)";c.font="600 22px 'IBM Plex Mono',monospace";c.textAlign="center";c.textBaseline="middle";c.fillText(d.imprint||d.imprint2||"",0,0);
   c.restore();
   return cv;
 }
@@ -492,13 +506,13 @@ function candidatesHTML(c){
   return `<div class="panel"><h3>3. 候選藥品（Top-3）</h3>
   ${lookalike?'<div class="alert warn"><span class="sev moderate"></span><span class="small"><b>外觀相似藥品：</b>前幾名分數接近，僅靠外觀無法區分，務必以藥袋或藥師確認。</span></div>':""}
   ${top[0].score<45?'<div class="alert danger"><span class="sev major"></span><span class="small"><b>無法可靠辨識：</b>相似度偏低，可能為資料庫外的藥品。請重新拍攝、輸入刻痕，或直接諮詢藥師。</span></div>':""}
-  ${top.map(x=>`<div class="cand ${state.selected===x.d.id?"sel":""}">${pillSVG(x.d)}<div style="min-width:0"><b>${esc(x.d.zh)} ${esc(x.d.strength)}</b> <span class="small muted">${esc(x.d.en)}</span><br><span class="small muted">${esc(x.d.brand)} · 許可證 <span class="mono">${esc(x.d.license)}</span> · 刻痕 <span class="mono">${esc(x.d.imprint)}</span></span><br><span class="small">${x.why.length?"相符：":""}${x.why.join("、")}</span></div>
+  ${top.map(x=>`<div class="cand ${state.selected===x.d.id?"sel":""}">${drugImg(x.d)}<div style="min-width:0"><b>${esc(x.d.zh)} ${esc(x.d.strength)}</b> <span class="small muted">${esc(x.d.en)}</span><br><span class="small muted">${esc(x.d.brand)} · 許可證 <span class="mono">${esc(x.d.license)}</span> · 刻痕 <span class="mono">${esc(impText(x.d))}</span></span><br><span class="small">${x.why.length?"相符：":""}${x.why.join("、")}</span></div>
    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><span class="small mono">${x.score}%</span><span class="bar-meter"><i style="width:${x.score}%"></i></span><button class="btn sm ${state.selected===x.d.id?"":"ghost"}" data-pick="${x.d.id}">選此藥核對</button></div></div>`).join("")}
   <p class="small muted">相似度為外觀特徵加權分數（顏色 35、形狀 25、劑型 10、刻痕 30），不是正確機率。</p></div>`;
 }
 function confirmHTML(){const d=byId[state.selected];return `<div class="panel" style="border-color:var(--warn)"><h3>4. 藥袋、處方或藥師確認</h3>
   <p class="small">請拿出藥袋或處方箋核對下列資訊。<b>全部相符</b>才能確認為「${esc(d.zh)}」。</p>
-  ${[["c1",`藥名相符：${d.zh}／${d.en}`],["c2",`劑量相符：${d.strength}`],["c3",`外觀相符：${COLORS[d.color[0]]}${d.color[1]?"／"+COLORS[d.color[1]]:""}・${SHAPES[d.shape]}・刻痕 ${d.imprint}`],["c4","這顆藥來自本人的藥袋或處方（非他人給予或來源不明）"]].map(([id,t])=>`<label class="check"><input type="checkbox" class="cf" id="${id}"><span>${esc(t)}</span></label>`).join("")}
+  ${[["c1",`藥名相符：${d.zh}／${d.en}`],["c2",`劑量相符：${d.strength}`],["c3",`外觀相符：${COLORS[d.color[0]]}${d.color[1]?"／"+COLORS[d.color[1]]:""}・${SHAPES[d.shape]}${d.sizeMm?"・約 "+d.sizeMm+" mm":""}・刻痕 ${impText(d)}`],["c4","這顆藥來自本人的藥袋或處方（非他人給予或來源不明）"]].map(([id,t])=>`<label class="check"><input type="checkbox" class="cf" id="${id}"><span>${esc(t)}</span></label>`).join("")}
   <label class="check"><input type="checkbox" id="c5"><span>或：已由藥師／護理師當面確認</span></label>
   <div class="row"><button class="btn" id="cfOk">確認，顯示衛教</button><button class="btn danger" id="cfNo">無法確認</button></div></div>`}
 function stopHTML(){return `<div class="alert danger"><span class="sev major"></span><div><b class="t">已停止辨識確認</b><span class="small">在未確認藥物身分前，請勿服用這顆藥。建議：重新在充足光線下拍攝正反兩面、輸入藥錠上的刻痕，或攜帶藥物與藥袋到社區藥局諮詢藥師。若已誤服並出現不適，請撥打 119 或立即就醫。</span><div class="row" style="margin-top:8px"><button class="btn sm" id="restart">重新拍攝</button></div></div></div>`}
@@ -533,8 +547,8 @@ function eduHTML(d){
 V.drugs=()=>{
   const sel=(location.hash.split("-")[1])||null; const d=sel&&byId[sel];
   if(d) return `<div class="row"><a class="btn ghost sm" href="#drugs">← 返回藥品列表</a></div>
-   <div class="panel"><div class="row">${pillSVG(d,72)}<div style="min-width:0;flex:1"><h2>${esc(d.zh)} ${esc(d.strength)}</h2><p class="muted">${esc(d.en)} · 商品名 ${esc(d.brand)}</p></div></div>
-   <dl class="kv"><dt>許可證字號</dt><dd class="mono">${esc(d.license)} <span class="chip ok">食藥署公開資料</span></dd>${d.product?`<dt>產品名稱</dt><dd>${esc(d.product.zh)}<br><span class="small muted">${esc(d.product.en)}</span></dd><dt>劑型／類別</dt><dd>${esc(d.product.dosageForm)}・${esc(d.product.category)}</dd><dt>主成分</dt><dd>${esc(d.product.ingredient)}</dd><dt>申請商</dt><dd>${esc(d.product.applicant)}</dd><dt>製造廠</dt><dd>${esc(d.product.manufacturer)}（${esc(d.product.country)}）</dd><dt>許可證效期</dt><dd class="mono">${esc(d.product.validUntil)}</dd>`:""}<dt>健保藥品代碼</dt><dd>${esc(d.nhi)}</dd><dt>外觀特徵</dt><dd>${d.color.map(c=>COLORS[c]).join("／")}・${SHAPES[d.shape]}・${FORMS[d.form]}・刻痕 <span class="mono">${esc(d.imprint)}</span>${d.score?"・有切割線":""} ${d.appearanceVerified?'<span class="chip ok">官方外觀</span>':'<span class="chip warn">示意，待匯入官方外觀圖</span>'}</dd><dt>藥物分類</dt><dd>${esc(d.klass)}</dd><dt>資料來源</dt><dd class="small">${esc(d.product?d.product.source:"示範資料")} · 衛教內容審核藥師：未審核</dd></dl>
+   <div class="panel"><div class="row">${drugImg(d,72)}<div style="min-width:0;flex:1"><h2>${esc(d.zh)} ${esc(d.strength)}</h2><p class="muted">${esc(d.en)} · 商品名 ${esc(d.brand)}</p></div></div>
+   <dl class="kv"><dt>許可證字號</dt><dd class="mono">${esc(d.license)} <span class="chip ok">食藥署公開資料</span></dd>${d.product?`<dt>產品名稱</dt><dd>${esc(d.product.zh)}<br><span class="small muted">${esc(d.product.en)}</span></dd><dt>劑型／類別</dt><dd>${esc(d.product.dosageForm)}・${esc(d.product.category)}</dd><dt>主成分</dt><dd>${esc(d.product.ingredient)}</dd><dt>申請商</dt><dd>${esc(d.product.applicant)}</dd><dt>製造廠</dt><dd>${esc(d.product.manufacturer)}（${esc(d.product.country)}）</dd><dt>許可證效期</dt><dd class="mono">${esc(d.product.validUntil)}</dd>`:""}<dt>健保藥品代碼</dt><dd>${esc(d.nhi)}</dd><dt>外觀特徵</dt><dd>${d.color.map(c=>COLORS[c]).join("／")}・${SHAPES[d.shape]}・${FORMS[d.form]}${d.sizeMm?`・約 ${esc(d.sizeMm)} mm`:""}${d.score?"・有切割線":""}<br>標註（正面／背面）：<span class="mono">${esc(impText(d))}</span> ${d.appearanceVerified?'<span class="chip ok">食藥署官方外觀</span>':'<span class="chip warn">示意</span>'}</dd>${d.image?`<dt>官方照片</dt><dd><img class="photo" src="${esc(d.image)}" alt="${esc(d.product?d.product.zh:d.zh)} 外觀照片" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'small muted',textContent:'目前環境無法載入食藥署圖檔，請點下方連結查看。'}))"><br><a class="small" href="${esc(d.image)}" target="_blank" rel="noopener">在食藥署網站開啟原圖</a><br><span class="small muted">${esc(d.appearanceSource||"")}</span></dd>`:""}<dt>藥物分類</dt><dd>${esc(d.klass)}</dd><dt>資料來源</dt><dd class="small">${esc(d.product?d.product.source:"示範資料")} · 衛教內容審核藥師：未審核</dd></dl>
    <div class="row"><button class="btn sm" data-addmed="${d.id}">加入我的用藥</button><button class="btn ghost sm" data-ask="${d.id}">詢問衛教助理</button></div></div>
    <div class="panel"><h3>個人化藥物衛教（12 項）</h3>${eduHTML(d)}</div>${foot()}`;
   return `<h2>臺灣藥品資料庫</h2>
@@ -549,7 +563,7 @@ V.drugs=()=>{
 function drugRows(){
   const q=($("#q")?.value||"").trim().toLowerCase(),qc=$("#qc")?.value,qs=$("#qs")?.value;
   const rows=DRUGS.filter(d=>(!q||[d.zh,d.en,d.brand,d.license,d.imprint,d.klass,d.nhi].join(" ").toLowerCase().includes(q))&&(!qc||d.color.includes(qc))&&(!qs||d.shape===qs));
-  $("#dlist").innerHTML=rows.map(d=>`<tr><td>${pillSVG(d,40)}</td><td><a href="#drugs-${d.id}"><b>${esc(d.zh)}</b></a> ${esc(d.strength)}<br><span class="small muted">${esc(d.en)}</span>${d.highAlert?' <span class="chip danger">高警訊</span>':""}</td><td class="small">${esc(d.klass)}</td><td class="mono small">${esc(d.license)}</td><td class="mono small">${esc(d.imprint)}</td></tr>`).join("")||`<tr><td colspan="5" class="muted">找不到符合的藥品。請改用其他關鍵字，或諮詢藥師。</td></tr>`;
+  $("#dlist").innerHTML=rows.map(d=>`<tr><td>${drugImg(d,40)}</td><td><a href="#drugs-${d.id}"><b>${esc(d.zh)}</b></a> ${esc(d.strength)}<br><span class="small muted">${esc(d.en)}</span>${d.highAlert?' <span class="chip danger">高警訊</span>':""}</td><td class="small">${esc(d.klass)}</td><td class="mono small">${esc(d.license)}</td><td class="mono small">${esc(d.imprint)}</td></tr>`).join("")||`<tr><td colspan="5" class="muted">找不到符合的藥品。請改用其他關鍵字，或諮詢藥師。</td></tr>`;
 }
 
 /* ---------- RAG-style assistant ---------- */
@@ -610,7 +624,7 @@ V.mymeds=()=>{
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start">
   <div class="panel"><h3>個人用藥紀錄</h3>
     ${state.meds.some(m=>m.example)?'<span class="small muted">示範清單：請刪除後加入您自己的藥物。</span>':""}
-    ${state.meds.map((m,i)=>`<div class="cand" style="grid-template-columns:48px 1fr auto">${pillSVG(byId[m.id],44)}<div style="min-width:0"><b>${esc(byId[m.id].zh)} ${esc(byId[m.id].strength)}</b><br><span class="small muted">每次 ${esc(m.dose)} · ${m.times.join("、")}</span></div><button class="btn ghost sm" data-del="${i}" aria-label="刪除 ${esc(byId[m.id].zh)}">刪除</button></div>`).join("")||'<p class="muted small">尚未加入藥物。用下方表單新增，或從影像辨識、藥品資料庫加入。</p>'}
+    ${state.meds.map((m,i)=>`<div class="cand" style="grid-template-columns:48px 1fr auto">${drugImg(byId[m.id],44)}<div style="min-width:0"><b>${esc(byId[m.id].zh)} ${esc(byId[m.id].strength)}</b><br><span class="small muted">每次 ${esc(m.dose)} · ${m.times.join("、")}</span></div><button class="btn ghost sm" data-del="${i}" aria-label="刪除 ${esc(byId[m.id].zh)}">刪除</button></div>`).join("")||'<p class="muted small">尚未加入藥物。用下方表單新增，或從影像辨識、藥品資料庫加入。</p>'}
     <form id="addMed" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr))">
       <label class="f">藥物<select id="am-id">${DRUGS.map(d=>`<option value="${d.id}">${esc(d.zh)} ${esc(d.strength)}</option>`).join("")}</select></label>
       <label class="f">每次劑量<input type="text" id="am-dose" value="1 顆"></label>
@@ -699,7 +713,10 @@ ${foot()}`;
 function foot(){return `<footer class="ft"><span>© 2026 <b>CY團隊</b> 開發 · AI-MedCare ${esc(DB._meta.version)}</span><span>本系統不取代醫師、藥師專業判斷 · 緊急狀況請撥 119</span></footer>`}
 
 /* ---------- render & events ---------- */
+// Fall back to the drawn illustration when an official photo cannot load (blocked network, offline)
+function checkImgs(){document.querySelectorAll(".pimg img").forEach(img=>{if(!img.hidden&&(!img.complete||!img.naturalWidth)){img.hidden=true;const f=img.nextElementSibling;if(f)f.hidden=false}})}
 function render(){
+  clearTimeout(render._t);render._t=setTimeout(checkImgs,7000);
   renderTabs();const v=route();$("#view").innerHTML=V[v]();
   if(v==="drugs"&&$("#dlist")){drugRows();["q","qc","qs"].forEach(id=>$("#"+id).addEventListener("input",drugRows))}
   if(v==="scan"&&state.scan){ if(state.scan.orig){$("#orig").appendChild(state.scan.orig)} if(state.scan.proc){$("#proc").appendChild(state.scan.proc)} }
