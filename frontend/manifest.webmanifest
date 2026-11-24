@@ -1,0 +1,13 @@
+{
+  "name": "AI-MedCare 智慧藥物辨識（CY團隊）",
+  "short_name": "AI-MedCare",
+  "description": "AI 智慧藥物影像辨識暨用藥衛教系統 — 開發者：CY團隊",
+  "lang": "zh-Hant-TW",
+  "start_url": "./index.html#home",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f0fa",
+  "theme_color": "#5b2a86",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
