@@ -1,5 +1,5 @@
 // AI-MedCare service worker (CY團隊) — offline cache for the app shell
-const CACHE = "aimc-v0.1.0";
+const CACHE = "aimc-v0.1.2";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {
@@ -18,6 +18,15 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  // Pages (HTML) are network-first so updates show up right away; offline falls back to cache.
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); return res; })
+        .catch(() => caches.match(e.request).then((r) => r || caches.match("./index.html")))
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(
       (hit) =>
