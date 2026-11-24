@@ -8,7 +8,7 @@
 /* Layout: sticky app bar + bottom tab bar on phones / side rail on tablets & desktop; content as working panels */
 :root{
   --bg:#f4f0fa; --surface:#fcfaff; --surface-2:#ebe3f6; --line:#d8cbe9;
-  --fg:#221a2e; --muted:#5f526f; --accent:#5b2a86; --accent-fg:#ffffff; --accent-soft:#e6d9f5;
+  --fg:#221a2e; --muted:#5f526f; --accent:#5b2a86; --accent-fg:#ffffff; --accent-soft:#e6d9f5; --accent-2:#d06bd8;
   --warn:#9a5b00; --warn-soft:#fff1d6; --danger:#b42318; --danger-soft:#fde4e1; --ok:#1d6b35; --ok-soft:#dcf2e2;
   --pill-shadow:0 1px 0 rgba(0,0,0,.06);
   --font:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
@@ -17,11 +17,11 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#140f1c; --surface:#1c1527; --surface-2:#251c33; --line:#3a2d4d;
-  --fg:#ece6f4; --muted:#b2a5c4; --accent:#c4a0f0; --accent-fg:#1d0f30; --accent-soft:#33224a;
+  --fg:#ece6f4; --muted:#b2a5c4; --accent:#c4a0f0; --accent-fg:#1d0f30; --accent-soft:#33224a; --accent-2:#ffd0f5;
   --warn:#f2b95a; --warn-soft:#3a2a0c; --danger:#ff8a7d; --danger-soft:#431713; --ok:#7fd69a; --ok-soft:#123321; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#140f1c; --surface:#1c1527; --surface-2:#251c33; --line:#3a2d4d;
-  --fg:#ece6f4; --muted:#b2a5c4; --accent:#c4a0f0; --accent-fg:#1d0f30; --accent-soft:#33224a;
+  --fg:#ece6f4; --muted:#b2a5c4; --accent:#c4a0f0; --accent-fg:#1d0f30; --accent-soft:#33224a; --accent-2:#ffd0f5;
   --warn:#f2b95a; --warn-soft:#3a2a0c; --danger:#ff8a7d; --danger-soft:#431713; --ok:#7fd69a; --ok-soft:#123321; color-scheme:dark}
 :root.hc{ --bg:#000; --surface:#000; --surface-2:#111; --line:#fff; --fg:#fff; --muted:#fff; --accent:#ffd400; --accent-fg:#000; --accent-soft:#222;
   --warn:#ffd400; --warn-soft:#000; --danger:#ff6b6b; --danger-soft:#000; --ok:#7CFF8A; --ok-soft:#000; color-scheme:dark}
@@ -150,6 +150,17 @@ footer.ft{border-top:1px solid var(--line);padding-top:14px;display:flex;justify
 .flow{display:flex;flex-direction:column;gap:6px;font-size:.88rem}
 .flow div{padding:8px 12px;border-radius:8px;background:var(--surface-2)}
 .flow div.key{background:var(--warn-soft);border:1px solid var(--warn);font-weight:700}
+
+/* Animated titles: shimmer sweep + soft glow pulse (slow, under 3 flashes/s, off for reduced motion) */
+.logo b,.hero h1,main h2{background:linear-gradient(100deg,currentColor 0%,currentColor 40%,var(--shine) 50%,currentColor 60%,currentColor 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text}
+.logo b{--shine:#ffe9a8;color:var(--accent-fg);-webkit-text-fill-color:transparent;animation:shimmer 3.2s linear infinite,glow 1.6s ease-in-out infinite alternate}
+.hero h1,main h2{--shine:var(--accent-2);color:var(--accent);-webkit-text-fill-color:transparent;animation:shimmer 3.6s linear infinite}
+.team{animation:blink 1.6s ease-in-out infinite}
+@keyframes shimmer{from{background-position:150% 0}to{background-position:-100% 0}}
+@keyframes glow{from{filter:drop-shadow(0 0 0 rgba(255,233,168,0))}to{filter:drop-shadow(0 0 6px rgba(255,233,168,.85))}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.logo b,.hero h1,main h2,.team{animation:none;-webkit-text-fill-color:currentColor}}
+:root.hc .logo b,:root.hc .hero h1,:root.hc main h2{-webkit-text-fill-color:currentColor;background:none}
 @media (prefers-reduced-motion:no-preference){.panel{animation:in .25s ease both}@keyframes in{from{transform:translateY(4px)}to{transform:none}}}
 </style>
 
