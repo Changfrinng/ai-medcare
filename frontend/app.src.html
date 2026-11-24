@@ -143,6 +143,8 @@ th{font-weight:700;color:var(--muted);font-size:.8rem;letter-spacing:.04em}
 .msg.a.urgent{background:var(--danger-soft);border:1px solid var(--danger)}
 .qs{display:flex;gap:6px;flex-wrap:wrap}
 .qs button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:.85rem}
+.ixchip{cursor:pointer;padding:6px 12px;font-weight:500;font-size:.85rem;white-space:normal}
+.ixchip input{accent-color:var(--accent)}
 .rem-box{display:flex;flex-direction:column;gap:10px;border:1px dashed var(--accent);border-radius:10px;padding:12px;background:var(--accent-soft)}
 .rem-modal{position:fixed;inset:0;z-index:50;background:rgba(20,10,30,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .rem-card{background:var(--surface);color:var(--fg);border-radius:16px;padding:20px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
@@ -215,13 +217,14 @@ const state={
   profile:store.get("profile",{allergy:[],pregnant:false,lactation:false,elderly:true,child:false,renal:false,hepatic:false}),
   taken:store.get("taken",{}),
   eduLog:store.get("eduLog",[]),
+  ix:store.get("ix",{drugs:null,foods:[]}),
   rem:store.get("rem",{on:false,tune:"musicbox",vol:0.7,voice:true}),
   fired:store.get("fired",{}),
   snooze:store.get("snooze",{}),
   scan:null, selected:null, confirmed:false,
   chat:[], chatDrug:null
 };
-function save(){store.set("rem",state.rem);store.set("fired",state.fired);store.set("snooze",state.snooze);store.set("mode",state.mode);store.set("big",state.big);store.set("hc",state.hc);store.set("meds",state.meds);store.set("profile",state.profile);store.set("taken",state.taken);store.set("eduLog",state.eduLog)}
+function save(){store.set("ix",state.ix);store.set("rem",state.rem);store.set("fired",state.fired);store.set("snooze",state.snooze);store.set("mode",state.mode);store.set("big",state.big);store.set("hc",state.hc);store.set("meds",state.meds);store.set("profile",state.profile);store.set("taken",state.taken);store.set("eduLog",state.eduLog)}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,2600)}
 
 const localDay=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -257,11 +260,12 @@ const ICON={
  drugs:'<rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2"/>',
  assistant:'<path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 10h8" stroke="currentColor" stroke-width="2"/>',
  mymeds:'<path d="M12 3v4M12 21v-4M4 12h4M20 12h-4" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/>',
+ interact:'<circle cx="8" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>',
  nurse:'<path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3"/>',
  lang:'<path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 6 8M11 5c0 4-3 7-6 8M13 21l4-10 4 10M14.5 17h5" fill="none" stroke="currentColor" stroke-width="2"/>',
  about:'<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7v.5" stroke="currentColor" stroke-width="2.4"/>'
 };
-const VIEWS=[["home","首頁"],["scan","影像辨識"],["drugs","藥品資料庫"],["assistant","衛教助理"],["mymeds","我的用藥"],["nurse","給藥核對"],["lang","多語言"],["about","關於"]];
+const VIEWS=[["home","首頁"],["scan","影像辨識"],["drugs","藥品資料庫"],["assistant","衛教助理"],["mymeds","我的用藥"],["interact","交互作用"],["nurse","給藥核對"],["lang","多語言"],["about","關於"]];
 function renderTabs(){
   const cur=route();
   $("#tabs").innerHTML=VIEWS.filter(([k])=>k!=="nurse"||state.mode==="pro").map(([k,t])=>`<a href="#${k}" ${k===cur?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>${t}</a>`).join("");
@@ -415,6 +419,21 @@ function sampleImage(id,bgDark=true){
   return cv;
 }
 
+/* ---------- drug-drug & drug-food interactions ---------- */
+const FOODS=DB.foodInteractions||[];
+function foodFor(ids,foodIds){const out=[];FOODS.forEach(f=>{if(foodIds&&!foodIds.includes(f.id))return;f.drugs.forEach(x=>{if(ids.includes(x.id))out.push({food:f,drug:byId[x.id],level:x.level,note:x.note})})});
+  const o={major:0,moderate:1,minor:2};return out.sort((a,b)=>o[a.level]-o[b.level])}
+function ixDrugHTML(it){const [t,c]=LEVEL[it.level];return `<div class="alert ${c||"info"}"><span class="sev ${it.level}"></span><div><b class="t">${esc(byId[it.a].zh)} ＋ ${esc(byId[it.b].zh)} <span class="chip ${c}">${t}</span></b><span class="small">${esc(it.note)}</span></div></div>`}
+function ixFoodHTML(x){const [t,c]=LEVEL[x.level];return `<div class="alert ${c||"info"}"><span class="sev ${x.level}"></span><div><b class="t">${x.food.icon} ${esc(x.food.name)} ＋ ${esc(x.drug.zh)} <span class="chip ${c}">${t}</span></b><span class="small">${esc(x.note)}</span></div></div>`}
+function showIxModal(title,html){document.querySelector(".ix-modal")?.remove();const m=document.createElement("div");m.className="rem-modal ix-modal";m.setAttribute("role","alertdialog");m.setAttribute("aria-label",title);
+  m.innerHTML=`<div class="rem-card" style="max-height:85vh;overflow:auto"><span class="eyebrow">交互作用提醒</span><h3>⚠️ ${esc(title)}</h3>${html}<p class="small muted">請與醫師或藥師確認是否需要調整，不要自行停藥。</p><div class="row"><a class="btn ghost" href="#interact" id="ixGo">查看完整交互作用</a><button class="btn" id="ixOk">我知道了</button></div></div>`;
+  document.body.appendChild(m);m.querySelector("#ixOk").onclick=()=>m.remove();m.querySelector("#ixGo").onclick=()=>m.remove()}
+function alertOnAdd(newId){const others=state.meds.map(m=>m.id).filter(id=>id!==newId);
+  const dd=interactionsFor([...new Set(others.concat(newId))]).filter(i=>i.a===newId||i.b===newId);
+  const ff=foodFor([newId]).filter(x=>x.level!=="minor");
+  if(!dd.length&&!ff.length)return;
+  showIxModal(`${byId[newId].zh} 的併用注意事項`,(dd.length?`<b>與您正在使用的藥物</b>${dd.map(ixDrugHTML).join("")}`:"")+(ff.length?`<b>飲食注意</b>${ff.map(ixFoodHTML).join("")}`:""))}
+
 /* ---------- views ---------- */
 const V={};
 V.home=()=>{
@@ -444,6 +463,7 @@ V.home=()=>{
     ${[["scan","AI 藥物影像辨識","拍攝藥錠、膠囊、藥袋或包裝，擷取顏色、形狀、刻痕與條碼，比對候選藥品。"],
        ["drugs","臺灣藥品資料庫","許可證字號、健保代碼、成分、外觀與仿單重點，以許可證為主要識別依據。"],
        ["assistant","GenAI 智慧衛教助理","以檢索增強（RAG）方式，只根據審核過的衛教資料回答並標示來源。"],
+       ["interact","藥物與食物交互作用","勾選藥物與常吃的食物、飲料、保健品，立即查出併用風險與正確做法。"],
        ["mymeds","用藥安全警示","交互作用、重複用藥、過敏及孕婦、高齡、肝腎功能等特殊族群提醒。"],
        ["lang","多語言語音衛教","語音朗讀、大字體、高對比，支援外籍照護者常用語言。"],
        ["nurse","醫護給藥核對","三讀五對、條碼掃描、高警訊藥物雙人核對與衛教紀錄（醫護專業版）。"]]
@@ -540,7 +560,7 @@ function eduHTML(d){
     ["05","常見副作用",`<ul>${d.common.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`],
     ["06","嚴重副作用（立即就醫）",`<ul>${d.serious.map(x=>`<li><b>${esc(x)}</b></li>`).join("")}</ul>`],
     ["07","忘記服藥",esc(d.missed)],
-    ["08","食物交互作用",esc(d.food)],
+    ["08","食物交互作用",esc(d.food)+(foodFor([d.id]).length?`<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">${foodFor([d.id]).map(x=>`<div class="small"><span class="chip ${LEVEL[x.level][1]}">${LEVEL[x.level][0]}</span> ${x.food.icon} <b>${esc(x.food.name)}</b>：${esc(x.note)}</div>`).join("")}</div>`:"")],
     ["09","藥物交互作用",inter.length?inter.map(i=>`<div class="small"><span class="chip ${LEVEL[i.level][1]}">${LEVEL[i.level][0]}</span> 與您清單中的<b>${esc(byId[i.a===d.id?i.b:i.a].zh)}</b>：${esc(i.note)}</div>`).join(""):`<span class="small">與您目前的用藥清單無已知交互作用。</span>${allInter.length?`<span class="small muted">需留意併用：${allInter.map(i=>byId[i.a===d.id?i.b:i.a].zh).join("、")}</span>`:""}`],
     ["10","藥物保存",esc(d.storage)],
     ["11","特殊族群",`<dl class="kv"><dt>孕婦</dt><dd>${esc(d.special.pregnancy)}</dd><dt>哺乳</dt><dd>${esc(d.special.lactation)}</dd><dt>兒童</dt><dd>${esc(d.special.child)}</dd><dt>高齡者</dt><dd>${esc(d.special.elderly)}</dd><dt>腎功能</dt><dd>${esc(d.renal)}</dd><dt>肝功能</dt><dd>${esc(d.hepatic)}</dd></dl>`],
@@ -609,7 +629,7 @@ function answer(text){
     return{text:out.join("\n\n"),src};
   }
   const d=ds[0];
-  const map={missed:`忘記服用${d.zh}：${d.missed}`,serious:`${d.zh}需要立即就醫的警訊：\n・${d.serious.join("\n・")}`,side:`${d.zh}常見副作用：${d.common.join("、")}。\n若出現以下情形請立即就醫：\n・${d.serious.join("\n・")}`,timing:`${d.zh}的服藥時間：${d.timing}`,food:`${d.zh}的飲食注意：${d.food}`,preg:`${d.zh}孕期：${d.special.pregnancy}\n哺乳：${d.special.lactation}`,storage:`${d.zh}保存方式：${d.storage}`,use:`${d.zh}的用途：${d.use}`,how:`${d.zh}的使用方式：${d.howto}`,mech:`${d.zh}的作用機轉：${d.mechanism}`};
+  const map={missed:`忘記服用${d.zh}：${d.missed}`,serious:`${d.zh}需要立即就醫的警訊：\n・${d.serious.join("\n・")}`,side:`${d.zh}常見副作用：${d.common.join("、")}。\n若出現以下情形請立即就醫：\n・${d.serious.join("\n・")}`,timing:`${d.zh}的服藥時間：${d.timing}`,food:(()=>{const fl=foodFor([d.id]);const hit=fl.filter(x=>x.food.name.split(/[（）、，,]/).some(k=>k&&k.length>=2&&text.includes(k.slice(0,2))));return hit.length?hit.map(x=>`【${LEVEL[x.level][0]}】${x.food.name} ＋ ${d.zh}：${x.note}`).join("\n"):`${d.zh}的飲食注意：${d.food}`+(fl.length?"\n"+fl.map(x=>`・${x.food.icon} ${x.food.name}（${LEVEL[x.level][0]}）`).join("\n"):"")})(),preg:`${d.zh}孕期：${d.special.pregnancy}\n哺乳：${d.special.lactation}`,storage:`${d.zh}保存方式：${d.storage}`,use:`${d.zh}的用途：${d.use}`,how:`${d.zh}的使用方式：${d.howto}`,mech:`${d.zh}的作用機轉：${d.mechanism}`};
   for(const k of intents){ if(k==="interact"){const ids=[...new Set(ds.map(x=>x.id).concat(state.meds.map(m=>m.id)))];const named=ds.map(x=>x.id);const it=named.length>1?interactionsFor(named):interactionsFor(ids).filter(i=>named.includes(i.a)||named.includes(i.b));out.push(it.length?it.map(i=>`【${LEVEL[i.level][0]}】${byId[i.a].zh} ＋ ${byId[i.b].zh}：${i.note}`).join("\n"):`在資料庫中未找到${ds.map(x=>x.zh).join("與")}和您用藥清單之間的已知交互作用。仍請告訴藥師您正在使用的所有藥物與保健食品。`)}
     else if(map[k]&&!(k==="missed"&&intents.includes("double")))out.push(map[k]); }
   if(!out.length)out.push(`${d.zh}（${d.en}）：${d.use}\n服藥時間：${d.timing}\n您可以問我：副作用、忘記服藥、食物、併用其他藥物、懷孕、保存方式。`);
@@ -676,6 +696,25 @@ function cg(){const a=+$("#cg-age").value,w=+$("#cg-wt").value,s=+$("#cg-scr").v
   const flags=ids.filter(id=>!/無需/.test(byId[id].renal));
   $("#cg-out").innerHTML=`<p>估計肌酸酐清除率 <b class="mono">${c.toFixed(1)} mL/min</b> <span class="chip ${c<30?"danger":c<60?"warn":"ok"}">${c<30?"重度下降":c<60?"中度下降":"大致正常"}</span></p>${flags.length&&c<60?flags.map(id=>`<div class="small">・<b>${esc(byId[id].zh)}</b>：${esc(byId[id].renal)}</div>`).join(""):'<p class="small muted">目前用藥清單無需依此清除率特別調整。</p>'}`}
 
+V.interact=()=>{
+  if(!state.ix.drugs)state.ix.drugs=state.meds.map(m=>m.id);
+  const ids=state.ix.drugs.filter(id=>byId[id]),fids=state.ix.foods;
+  const dd=interactionsFor(ids),ff=foodFor(ids,fids),allF=foodFor(ids);
+  const cnt=l=>dd.filter(x=>x.level===l).length+ff.filter(x=>x.level===l).length;
+  return `<h2>藥物與食物交互作用</h2>
+  <p class="muted small">勾選正在使用的藥物，以及平常會吃喝的食物、飲料或保健品，系統會列出併用風險與建議。</p>
+  <div class="panel"><div class="row" style="justify-content:space-between"><h3>1. 選擇藥物（${ids.length}）</h3><span class="row"><button class="btn ghost sm" id="ixMine">帶入我的用藥</button><button class="btn ghost sm" id="ixAll">全選</button><button class="btn ghost sm" id="ixNone">清除</button></span></div>
+    <div class="row">${DRUGS.map(d=>`<label class="chip ixchip ${ids.includes(d.id)?"acc":""}"><input type="checkbox" data-ixd="${d.id}" ${ids.includes(d.id)?"checked":""}> ${esc(d.zh)}</label>`).join("")}</div></div>
+  <div class="panel"><div class="row" style="justify-content:space-between"><h3>2. 選擇食物、飲料、保健品（${fids.length}）</h3><span class="row"><button class="btn ghost sm" id="ixFAll">全選</button><button class="btn ghost sm" id="ixFNone">清除</button></span></div>
+    <div class="row">${FOODS.map(f=>`<label class="chip ixchip ${fids.includes(f.id)?"acc":""}"><input type="checkbox" data-ixf="${f.id}" ${fids.includes(f.id)?"checked":""}> ${f.icon} ${esc(f.name)}</label>`).join("")}</div></div>
+  <div class="panel"><div class="row" style="justify-content:space-between"><h3>3. 檢查結果</h3><span class="row">${["major","moderate","minor"].map(l=>`<span class="chip ${LEVEL[l][1]}">${LEVEL[l][0]} ${cnt(l)}</span>`).join("")}</span></div>
+    <h4 style="margin:4px 0 0">💊 藥物 ＋ 藥物</h4>
+    ${ids.length<2?'<p class="small muted">請至少選擇兩種藥物。</p>':dd.length?dd.map(ixDrugHTML).join(""):'<div class="alert ok"><span class="sev" style="background:var(--ok)"></span><span class="small">所選藥物之間沒有資料庫中已知的交互作用。</span></div>'}
+    <h4 style="margin:8px 0 0">🍽️ 藥物 ＋ 食物</h4>
+    ${!ids.length?'<p class="small muted">請先選擇藥物。</p>':!fids.length?(allF.length?`<p class="small muted">尚未選擇食物。以下是所選藥物需要留意的飲食（共 ${allF.length} 項）：</p>${allF.filter(x=>x.level!=="minor").map(ixFoodHTML).join("")||'<p class="small muted">僅有輕度注意事項，勾選食物可查看。</p>'}`:'<p class="small muted">所選藥物沒有特別的食物交互作用。</p>'):ff.length?ff.map(ixFoodHTML).join(""):'<div class="alert ok"><span class="sev" style="background:var(--ok)"></span><span class="small">所選食物與藥物之間沒有資料庫中已知的交互作用。</span></div>'}
+    <p class="small muted">資料庫收錄 ${DB.interactions.length} 組藥物交互作用、${FOODS.reduce((n,f)=>n+f.drugs.length,0)} 組食物交互作用，屬一般藥學知識摘要，尚未經藥師審核，不取代醫師、藥師判斷。</p></div>
+  ${foot()}`;
+};
 V.nurse=()=>{
   if(state.mode!=="pro")return `<div class="panel"><h3>給藥核對為醫護專業版功能</h3><p class="small muted">請由右上角切換至「醫護專業版」。</p></div>`;
   const log=state.eduLog;const pass=log.filter(l=>l.tb===true).length;
@@ -821,6 +860,17 @@ document.addEventListener("change",e=>{
   if(t.dataset.allergy){const a=state.profile.allergy;state.profile.allergy=t.checked?[...new Set([...a,t.dataset.allergy])]:a.filter(x=>x!==t.dataset.allergy);save();render()}
   if(t.classList.contains("n5")||t.id==="n-dbl"){}
 });
+document.addEventListener("change",e=>{const t=e.target;
+  if(t.dataset.ixd){const a=new Set(state.ix.drugs||[]);t.checked?a.add(t.dataset.ixd):a.delete(t.dataset.ixd);state.ix.drugs=[...a];save();render()}
+  if(t.dataset.ixf){const a=new Set(state.ix.foods);t.checked?a.add(t.dataset.ixf):a.delete(t.dataset.ixf);state.ix.foods=[...a];save();render()}
+});
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.id==="ixMine"){state.ix.drugs=state.meds.map(m=>m.id);save();render()}
+  if(b.id==="ixAll"){state.ix.drugs=DRUGS.map(d=>d.id);save();render()}
+  if(b.id==="ixNone"){state.ix.drugs=[];save();render()}
+  if(b.id==="ixFAll"){state.ix.foods=FOODS.map(f=>f.id);save();render()}
+  if(b.id==="ixFNone"){state.ix.foods=[];save();render()}
+});
 document.addEventListener("dragover",e=>{const d=e.target.closest?.("#drop");if(d){e.preventDefault();d.classList.add("over")}});
 document.addEventListener("drop",e=>{const d=e.target.closest?.("#drop");if(d){e.preventDefault();const f=e.dataTransfer.files[0];if(f){const img=new Image();img.onload=()=>handleImage(img);img.src=URL.createObjectURL(f)}}});
 document.addEventListener("click",e=>{
@@ -843,7 +893,7 @@ document.addEventListener("click",e=>{
     const out=$("#qr-"+d.id);if(ans<d.quiz.length){out.textContent="請回答所有題目";return}
     out.innerHTML=ok===d.quiz.length?'<span class="chip ok">全部答對，衛教成效良好</span>':`<span class="chip warn">答對 ${ok}／${d.quiz.length}，請再閱讀相關段落或請教藥師</span>`;state.lastQuiz={id:d.id,pass:ok===d.quiz.length}}
   else if(ds.log){const pid="P-"+String(Math.floor(Math.random()*9000)+1000);const tb=state.lastQuiz&&state.lastQuiz.id===ds.log?state.lastQuiz.pass:null;state.eduLog.push({t:new Date().toLocaleString("zh-TW",{hour12:false}),pid,id:ds.log,tb});save();toast(`已記錄衛教（病人代號 ${pid}）`)}
-  else if(ds.addmed){if(state.meds.some(m=>m.example))state.meds=state.meds.filter(m=>!m.example);state.meds.push({id:ds.addmed,dose:"1 顆",times:["08:00"]});save();toast("已加入我的用藥");}
+  else if(ds.addmed){if(state.meds.some(m=>m.example))state.meds=state.meds.filter(m=>!m.example);state.meds.push({id:ds.addmed,dose:"1 顆",times:["08:00"]});save();toast("已加入我的用藥");alertOnAdd(ds.addmed);}
   else if(ds.ask){state.chatDrug=ds.ask;state.chat=state.chat.length?state.chat:[];go("assistant")}
   else if(ds.del!==undefined){state.meds.splice(+ds.del,1);save();render()}
   else if(ds.q){ask(ds.q)}
@@ -863,7 +913,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("submit",e=>{e.preventDefault();
   if(e.target.id==="chatForm"){const v=$("#chatIn").value.trim();if(v)ask(v)}
-  if(e.target.id==="addMed"){if(state.meds.some(m=>m.example))state.meds=state.meds.filter(m=>!m.example);state.meds.push({id:$("#am-id").value,dose:$("#am-dose").value||"1 顆",times:[$("#am-time").value||"08:00"]});save();render();toast("已加入")}
+  if(e.target.id==="addMed"){if(state.meds.some(m=>m.example))state.meds=state.meds.filter(m=>!m.example);const nid=$("#am-id").value;state.meds.push({id:nid,dose:$("#am-dose").value||"1 顆",times:[$("#am-time").value||"08:00"]});save();render();toast("已加入");alertOnAdd(nid)}
 });
 function ask(q){state.chat.push({r:"u",text:q});state.chat.push({r:"a",...answer(q)});render();setTimeout(()=>$("#chatIn")?.focus(),0)}
 
@@ -896,7 +946,8 @@ function fireReminder(list){
   const names=list.map(x=>`${byId[x.m.id].zh} ${x.m.dose}`).join("、");
   list.forEach(x=>{state.fired[x.k]=true;delete state.snooze[x.k]});save();
   const ms=playTune(state.rem.tune,2);
-  if(state.rem.voice)setTimeout(()=>speak(`現在是服藥時間，請服用${names}。`),Math.min(ms||0,12000)+300);
+  const fw=foodFor([...new Set(list.map(x=>x.m.id))]).filter(x=>x.level==="major").map(x=>`服用${x.drug.zh}時請避免${x.food.name.split("（")[0]}`);
+  if(state.rem.voice)setTimeout(()=>speak(`現在是服藥時間，請服用${names}。${fw.join("。")}`),Math.min(ms||0,12000)+300);
   try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){}
   try{if("Notification" in window&&Notification.permission==="granted"){const body="請服用："+names;
     if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification("💊 服藥時間到了",{body,tag:"aimc-dose",renotify:true,icon:"icon.svg"})).catch(()=>new Notification("💊 服藥時間到了",{body}));
@@ -905,6 +956,8 @@ function fireReminder(list){
   const m=document.createElement("div");m.className="rem-modal";m.setAttribute("role","alertdialog");m.setAttribute("aria-label","服藥提醒");
   m.innerHTML=`<div class="rem-card"><span class="eyebrow">服藥提醒 · ${hhmm()}</span><h3>💊 服藥時間到了</h3>
     ${list.map(x=>`<div class="row" style="flex-wrap:nowrap;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${drugImg(byId[x.m.id],44)}<div><b>${esc(byId[x.m.id].zh)} ${esc(x.m.dose)}</b><br><span class="small muted">${esc(byId[x.m.id].timing)}</span></div></div>`).join("")}
+    ${(()=>{const ids=[...new Set(list.map(x=>x.m.id))];const dd=interactionsFor([...new Set(state.meds.map(m=>m.id))]).filter(i=>ids.includes(i.a)||ids.includes(i.b)).filter(i=>i.level!=="minor");const ff=foodFor(ids).filter(x=>x.level!=="minor");
+      return (dd.length||ff.length)?`<details open><summary class="small"><b>⚠️ 服藥前注意（${dd.length+ff.length}）</b></summary><div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">${dd.map(ixDrugHTML).join("")}${ff.map(ixFoodHTML).join("")}</div></details>`:""})()}
     <div class="row"><button class="btn" id="remTaken">✓ 已服用</button><button class="btn ghost" id="remSnooze">10 分鐘後再提醒</button><button class="btn ghost" id="remClose">關閉</button></div></div>`;
   document.body.appendChild(m);setTimeout(checkImgs,7000);
   m.querySelector("#remTaken").onclick=()=>{list.forEach(x=>state.taken[x.k]=true);save();stopTune();stopSpeak();m.remove();render();toast("已記錄服藥")};

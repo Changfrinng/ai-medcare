@@ -34,3 +34,7 @@ def test_visits():
     a = c.get("/api/visits").json()["count"]
     b = c.post("/api/visits").json()["count"]
     assert b == a + 1
+
+def test_food_interactions():
+    r = c.get("/api/food-interactions", params={"drug_ids": "simvastatin,warfarin", "foods": "grapefruit"}).json()
+    assert r["interactions"][0]["drug"] == "simvastatin" and r["interactions"][0]["level"] == "major"

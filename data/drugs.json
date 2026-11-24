@@ -1397,5 +1397,229 @@
     "penicillin": "盤尼西林類",
     "nsaid": "NSAID／阿斯匹靈",
     "statin": "Statin 類"
-  }
+  },
+  "foodInteractions": [
+    {
+      "id": "grapefruit",
+      "name": "葡萄柚、葡萄柚汁",
+      "icon": "🍊",
+      "drugs": [
+        {
+          "id": "simvastatin",
+          "level": "major",
+          "note": "葡萄柚會抑制 CYP3A4，使辛伐他汀血中濃度明顯上升，增加肌肉病變及橫紋肌溶解風險。服藥期間應避免。"
+        },
+        {
+          "id": "atorvastatin",
+          "level": "moderate",
+          "note": "大量飲用（每天超過約 1 公升）會使阿托伐他汀濃度上升，增加肌肉痠痛風險，建議避免大量飲用。"
+        },
+        {
+          "id": "amlodipine",
+          "level": "minor",
+          "note": "可能使氨氯地平濃度輕度上升，留意頭暈、腳踝水腫。"
+        }
+      ]
+    },
+    {
+      "id": "alcohol",
+      "name": "酒精（啤酒、紅酒、烈酒、藥酒）",
+      "icon": "🍺",
+      "drugs": [
+        {
+          "id": "acetaminophen",
+          "level": "major",
+          "note": "長期或大量飲酒時服用乙醯胺酚，會增加肝臟損傷風險。服藥期間避免飲酒。"
+        },
+        {
+          "id": "metformin",
+          "level": "moderate",
+          "note": "酒精增加乳酸中毒與低血糖風險，避免過量或空腹飲酒。"
+        },
+        {
+          "id": "warfarin",
+          "level": "moderate",
+          "note": "飲酒會使 INR 波動，大量飲酒增加出血風險。"
+        },
+        {
+          "id": "aspirin",
+          "level": "moderate",
+          "note": "酒精增加腸胃出血風險。"
+        },
+        {
+          "id": "ibuprofen",
+          "level": "moderate",
+          "note": "酒精增加腸胃潰瘍與出血風險。"
+        },
+        {
+          "id": "clopidogrel",
+          "level": "moderate",
+          "note": "酒精增加腸胃出血風險。"
+        },
+        {
+          "id": "allopurinol",
+          "level": "minor",
+          "note": "酒精（尤其啤酒）會提高尿酸，降低治療效果並誘發痛風。"
+        },
+        {
+          "id": "amlodipine",
+          "level": "minor",
+          "note": "酒精與降血壓藥併用可能加重頭暈、姿勢性低血壓。"
+        },
+        {
+          "id": "losartan",
+          "level": "minor",
+          "note": "酒精與降血壓藥併用可能加重頭暈、姿勢性低血壓。"
+        },
+        {
+          "id": "omeprazole",
+          "level": "minor",
+          "note": "酒精會刺激胃酸分泌，降低治療胃食道逆流的效果。"
+        }
+      ]
+    },
+    {
+      "id": "vitk",
+      "name": "深綠色蔬菜、納豆（維生素 K）",
+      "icon": "🥬",
+      "drugs": [
+        {
+          "id": "warfarin",
+          "level": "moderate",
+          "note": "維生素 K 會降低華法林的抗凝血效果。不必禁食，但每天攝取量要維持穩定，避免突然大量增減。"
+        }
+      ]
+    },
+    {
+      "id": "cranberry",
+      "name": "蔓越莓汁",
+      "icon": "🫐",
+      "drugs": [
+        {
+          "id": "warfarin",
+          "level": "moderate",
+          "note": "大量飲用可能使 INR 上升、增加出血風險，請避免大量飲用並告知醫師。"
+        }
+      ]
+    },
+    {
+      "id": "herbal",
+      "name": "中藥與保健品（當歸、丹參、人參、銀杏、魚油、大蒜精）",
+      "icon": "🌿",
+      "drugs": [
+        {
+          "id": "warfarin",
+          "level": "major",
+          "note": "可能明顯增強或減弱抗凝血作用，增加出血或血栓風險。使用任何中藥或保健品前務必先詢問醫師、藥師。"
+        },
+        {
+          "id": "aspirin",
+          "level": "moderate",
+          "note": "銀杏、魚油、當歸、大蒜精等可能增加出血傾向。"
+        },
+        {
+          "id": "clopidogrel",
+          "level": "moderate",
+          "note": "銀杏、魚油、當歸、大蒜精等可能增加出血傾向。"
+        }
+      ]
+    },
+    {
+      "id": "calcium",
+      "name": "牛奶、鈣片、鐵劑、制酸劑、豆漿",
+      "icon": "🥛",
+      "drugs": [
+        {
+          "id": "levothyroxine",
+          "level": "moderate",
+          "note": "鈣、鐵、制酸劑與豆製品會減少甲狀腺素吸收，請間隔至少 4 小時。"
+        },
+        {
+          "id": "digoxin",
+          "level": "minor",
+          "note": "制酸劑可能減少地高辛吸收，建議間隔約 2 小時。"
+        }
+      ]
+    },
+    {
+      "id": "coffee",
+      "name": "咖啡",
+      "icon": "☕",
+      "drugs": [
+        {
+          "id": "levothyroxine",
+          "level": "moderate",
+          "note": "咖啡會減少甲狀腺素吸收，服藥後至少等 30–60 分鐘再喝咖啡。"
+        },
+        {
+          "id": "omeprazole",
+          "level": "minor",
+          "note": "咖啡可能加重胃食道逆流症狀。"
+        }
+      ]
+    },
+    {
+      "id": "potassium",
+      "name": "低鈉鹽（含鉀代鹽）、鉀補充劑、大量高鉀蔬果",
+      "icon": "🧂",
+      "drugs": [
+        {
+          "id": "losartan",
+          "level": "moderate",
+          "note": "洛沙坦會使血鉀上升，再大量攝取鉀可能造成高血鉀（肌肉無力、心律不整），請先詢問醫師。"
+        }
+      ]
+    },
+    {
+      "id": "fiber",
+      "name": "高纖食物（麥麩、燕麥、纖維補充品）",
+      "icon": "🌾",
+      "drugs": [
+        {
+          "id": "digoxin",
+          "level": "minor",
+          "note": "高纖食物可能減少地高辛吸收，建議與服藥時間間隔。"
+        },
+        {
+          "id": "levothyroxine",
+          "level": "minor",
+          "note": "高纖飲食可能減少甲狀腺素吸收，保持穩定飲食並依 TSH 調整。"
+        }
+      ]
+    },
+    {
+      "id": "licorice",
+      "name": "甘草（含甘草的中藥、零食）",
+      "icon": "🍬",
+      "drugs": [
+        {
+          "id": "digoxin",
+          "level": "moderate",
+          "note": "大量甘草會造成低血鉀，增加毛地黃中毒風險。"
+        },
+        {
+          "id": "losartan",
+          "level": "minor",
+          "note": "大量甘草會使血壓上升，降低降血壓效果。"
+        },
+        {
+          "id": "amlodipine",
+          "level": "minor",
+          "note": "大量甘草會使血壓上升，降低降血壓效果。"
+        }
+      ]
+    },
+    {
+      "id": "purine",
+      "name": "高普林食物（內臟、海鮮、濃肉湯、含糖飲料）",
+      "icon": "🦐",
+      "drugs": [
+        {
+          "id": "allopurinol",
+          "level": "minor",
+          "note": "高普林飲食會提高尿酸，降低治療效果，建議減少攝取並多喝水。"
+        }
+      ]
+    }
+  ]
 }

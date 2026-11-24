@@ -234,6 +234,21 @@ def chat(req: ChatRequest):
     return {"answer": answer, "sources": [{"drug": p["drug"], "section": p["section"], "origin": "AI-MedCare 示範知識庫"} for p in passages]}
 
 
+@app.get("/api/food-interactions")
+def food_interactions(drug_ids: str = "", foods: str = ""):
+    """Drug-food interactions. drug_ids / foods are comma-separated ids; empty foods = all foods."""
+    ids = [x for x in drug_ids.split(",") if x in DRUGS]
+    fset = {x for x in foods.split(",") if x}
+    out = []
+    for f in DB.get("foodInteractions", []):
+        if fset and f["id"] not in fset:
+            continue
+        for x in f["drugs"]:
+            if x["id"] in ids:
+                out.append({"food": f["id"], "foodName": f["name"], "drug": x["id"], "drugName": DRUGS[x["id"]]["zh"], "level": x["level"], "note": x["note"]})
+    return {"interactions": sorted(out, key=lambda i: LEVEL_ORDER[i["level"]])}
+
+
 @app.get("/fhir/MedicationKnowledge/{drug_id}")
 def fhir_medication_knowledge(drug_id: str):
     """HL7 FHIR R4 MedicationKnowledge（簡化），供 HIS／EMR 串接。"""
