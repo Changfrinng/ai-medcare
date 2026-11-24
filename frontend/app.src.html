@@ -264,6 +264,7 @@ $("#t-big").onclick=()=>{state.big=!state.big;save();applyPrefs()};
 $("#t-hc").onclick=()=>{state.hc=!state.hc;save();applyPrefs()};
 
 /* ---------- speech ---------- */
+function stopSpeak(){try{if("speechSynthesis" in window)speechSynthesis.cancel()}catch(e){}}
 function speak(text,lang="zh-TW"){
   try{ if(!("speechSynthesis" in window)){toast("此瀏覽器不支援語音朗讀");return}
     speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=.92;
@@ -598,6 +599,7 @@ V.assistant=()=>{
     <div class="chat" id="chat" aria-live="polite">${state.chat.map(m=>`<div class="msg ${m.r}${m.urgent?" urgent":""}">${esc(m.text)}${m.src?`<span class="src">${esc(m.src)}</span>`:""}${m.r==="a"?` <button class="iconbtn small" style="border-color:var(--line);margin-top:4px" data-speak="${esc(m.text)}">🔊 朗讀</button>`:""}</div>`).join("")}</div>
     <div class="qs">${["華法林可以吃葡萄柚嗎？","氯吡格雷可以跟奧美拉唑一起吃嗎？","二甲雙胍什麼時候吃？","地高辛有什麼危險徵兆？","我懷孕了可以吃洛沙坦嗎？"].map(q=>`<button data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
     <form id="chatForm" class="row" style="flex-wrap:nowrap"><label class="f" style="flex:1"><span class="small muted">輸入您的用藥問題</span><input type="text" id="chatIn" placeholder="例：忘記吃阿斯匹靈怎麼辦？" autocomplete="off"></label><button class="btn" type="button" id="mic" title="語音輸入" style="align-self:flex-end">🎤</button><button class="btn" style="align-self:flex-end">送出</button></form>
+    <div id="micHint" class="small muted" aria-live="polite"></div>
   </div>${foot()}`;
 };
 
@@ -725,7 +727,46 @@ async function startCam(){
 function shootCam(){const v=$("#camVideo");if(!v.videoWidth){toast("相機尚未就緒");return}
   const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
   stopCam();const img=new Image();img.onload=()=>handleImage(img);img.src=c.toDataURL("image/jpeg",.92)}
-window.addEventListener("hashchange",stopCam);
+window.addEventListener("hashchange",()=>{stopCam();stopSpeak();stopMic()});
+window.addEventListener("pagehide",()=>{stopSpeak();stopMic()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){stopSpeak();stopMic()}});
+
+/* ---------- voice input ---------- */
+// 1) Claude preview pages: platform dictation capability (the preview frame blocks the raw microphone)
+// 2) Normal browsers: Web Speech API (Chrome/Edge/Android, Safari iOS 14.5+)
+let dict=null, rec=null, micOn=false, micBase="";
+try{ if(window.claude&&window.claude.use){ window.claude.use("dictation").then(d=>{dict=d;
+  if(d){d.onPartial(({text})=>{const i=$("#chatIn");if(i)i.value=(micBase+" "+text).trim()});
+        d.onFinal(({text})=>{micBase=(micBase+" "+text).trim();const i=$("#chatIn");if(i)i.value=micBase});
+        d.onState(({state:st})=>setMic(st==="listening"))}}).catch(()=>{}) } }catch(e){}
+function setMic(on){micOn=on;const m=$("#mic");if(m){m.textContent=on?"⏹":"🎤";m.setAttribute("aria-pressed",on);m.title=on?"停止語音輸入":"語音輸入";m.classList.toggle("danger",on)}
+  const h=$("#micHint"),L="正在聆聽…說完後再按一次 ⏹ 或稍等即可";if(h){if(on)h.textContent=L;else if(h.textContent===L)h.textContent=""}}
+function stopMic(){try{if(rec)rec.abort()}catch(e){}rec=null;try{if(dict&&micOn)dict.stop()}catch(e){}setMic(false)}
+function micError(code){const M={
+  "not-allowed":"麥克風權限被拒絕。請在瀏覽器網址列左側的「網站設定／權限」允許麥克風；iPhone 另需在「設定 > Safari > 麥克風」允許。",
+  "service-not-allowed":"此瀏覽器不允許語音辨識服務。iPhone 請用 Safari 並開啟「設定 > Siri > 聽寫」，或改用鍵盤上的 🎤 聽寫鍵。",
+  "audio-capture":"找不到麥克風，請確認裝置有麥克風且未被其他 App 使用。",
+  "network":"語音辨識需要網路連線，請確認網路後再試。",
+  "no-speech":"沒有聽到聲音，請靠近麥克風再說一次。",
+  "not_granted":"您未允許語音輸入，可改用鍵盤輸入。",
+  "embedded":"預覽視窗不允許使用麥克風，請改用正式網址開啟，或使用鍵盤上的 🎤 聽寫鍵。",
+  "unsupported":"此瀏覽器不支援網頁語音輸入（例如 LINE、Facebook 內建瀏覽器或 iPhone 上的 Chrome）。請用 Safari（iPhone）或 Chrome（Android／電腦）開啟，或使用鍵盤上的 🎤 聽寫鍵。"};
+  const h=$("#micHint");const t=M[code]||"無法使用麥克風，請改用鍵盤上的 🎤 聽寫鍵輸入。";if(h)h.textContent=t;toast(t)}
+function toggleMic(){
+  if(micOn){if(rec){try{rec.stop()}catch(e){}}else if(dict){dict.stop().catch(()=>{})}return}
+  stopSpeak(); micBase=($("#chatIn")?.value||"").trim();
+  if(dict){ setMic(true); dict.start().catch(err=>{setMic(false);micError(err&&err.code==="not_granted"?"not_granted":"embedded")}); return }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){micError("unsupported");return}
+  try{
+    rec=new SR(); rec.lang="zh-TW"; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
+    rec.onresult=ev=>{let fin="",tmp="";for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t;else tmp+=t}
+      if(fin)micBase=(micBase+" "+fin).trim(); const inp=$("#chatIn"); if(inp)inp.value=(micBase+" "+tmp).trim()};
+    rec.onerror=ev=>{const embedded=(()=>{try{return window.top!==window.self}catch(e){return true}})();micError(ev.error==="not-allowed"&&embedded?"embedded":ev.error);setMic(false);rec=null};
+    rec.onend=()=>{setMic(false);rec=null;const v=($("#chatIn")?.value||"").trim();if(v&&micBase){ask(v);micBase=""}};
+    rec.start(); setMic(true);
+  }catch(err){setMic(false);rec=null;micError("unsupported")}
+}
 
 function handleImage(img){
   const {res,cv}=analyzeImage(img);
@@ -769,8 +810,7 @@ document.addEventListener("click",e=>{
   else if(ds.del!==undefined){state.meds.splice(+ds.del,1);save();render()}
   else if(ds.q){ask(ds.q)}
   else if(b.id==="chatClear"){state.chat=[{r:"a",text:"對話已清除。請輸入藥名與您的問題。",src:"CY團隊 · AI-MedCare"}];state.chatDrug=null;render()}
-  else if(b.id==="mic"){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("此裝置瀏覽器不支援語音輸入，請改用鍵盤或系統語音輸入");return}
-    try{const r=new SR();r.lang="zh-TW";r.onresult=ev=>{$("#chatIn").value=ev.results[0][0].transcript};r.onerror=()=>toast("無法使用麥克風");r.start();toast("請開始說話…")}catch(err){toast("無法使用麥克風")}}
+  else if(b.id==="mic"){toggleMic()}
   else if(b.id==="n-scan"){const pid=$("#n-pid").value.trim(),bc=$("#n-bc").value.trim(),ord=byId[$("#n-order").value];const d=DRUGS.find(x=>x.barcode===bc);
     let h="";if(!pid)h+=alertHTML({level:"major",title:"缺少病人身分",text:"請先掃描病人手圈並以兩種方式確認身分。"});
     if(!d)h+=alertHTML({level:"major",title:"條碼無法辨識",text:"資料庫找不到此藥品條碼，請勿給藥，聯絡藥局確認。"});
