@@ -227,7 +227,7 @@ function pillSVG(d,size=56){
   else if(d.shape==="round") shape=`<circle cx="28" cy="28" r="19" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="13" y1="28" x2="43" y2="28" stroke="${stroke}"/>`:""}`;
   else if(d.shape==="oval") shape=`<ellipse cx="28" cy="28" rx="23" ry="15" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="28" y1="14" x2="28" y2="42" stroke="${stroke}"/>`:""}`;
   else shape=`<rect x="4" y="17" width="48" height="22" rx="11" fill="${c1}" stroke="${stroke}"/>${d.score?`<line x1="28" y1="17" x2="28" y2="39" stroke="${stroke}"/>`:""}`;
-  return `<svg class="pill" width="${size}" height="${size}" viewBox="0 0 56 56" role="img" aria-label="${esc(d.zh)} 外觀示意">${shape}<text x="28" y="${d.shape==="round"?33:31}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" font-weight="600" fill="rgba(0,0,0,.55)">${esc(d.imprint)}</text></svg>`;
+  return `<svg class="pill" width="${size}" height="${size}" viewBox="0 0 56 56" role="img" aria-label="${esc(d.zh)} 外觀示意"><title>外觀示意圖（非官方照片）</title>${shape}<text x="28" y="${d.shape==="round"?33:31}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" font-weight="600" fill="rgba(0,0,0,.55)">${esc(d.imprint)}</text></svg>`;
 }
 
 /* ---------- navigation ---------- */
@@ -492,7 +492,7 @@ function candidatesHTML(c){
   return `<div class="panel"><h3>3. 候選藥品（Top-3）</h3>
   ${lookalike?'<div class="alert warn"><span class="sev moderate"></span><span class="small"><b>外觀相似藥品：</b>前幾名分數接近，僅靠外觀無法區分，務必以藥袋或藥師確認。</span></div>':""}
   ${top[0].score<45?'<div class="alert danger"><span class="sev major"></span><span class="small"><b>無法可靠辨識：</b>相似度偏低，可能為資料庫外的藥品。請重新拍攝、輸入刻痕，或直接諮詢藥師。</span></div>':""}
-  ${top.map(x=>`<div class="cand ${state.selected===x.d.id?"sel":""}">${pillSVG(x.d)}<div style="min-width:0"><b>${esc(x.d.zh)} ${esc(x.d.strength)}</b> <span class="small muted">${esc(x.d.en)}</span><br><span class="small muted">${esc(x.d.klass)} · 許可證 <span class="mono">${esc(x.d.license)}</span> · 刻痕 <span class="mono">${esc(x.d.imprint)}</span></span><br><span class="small">${x.why.length?"相符：":""}${x.why.join("、")}</span></div>
+  ${top.map(x=>`<div class="cand ${state.selected===x.d.id?"sel":""}">${pillSVG(x.d)}<div style="min-width:0"><b>${esc(x.d.zh)} ${esc(x.d.strength)}</b> <span class="small muted">${esc(x.d.en)}</span><br><span class="small muted">${esc(x.d.brand)} · 許可證 <span class="mono">${esc(x.d.license)}</span> · 刻痕 <span class="mono">${esc(x.d.imprint)}</span></span><br><span class="small">${x.why.length?"相符：":""}${x.why.join("、")}</span></div>
    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><span class="small mono">${x.score}%</span><span class="bar-meter"><i style="width:${x.score}%"></i></span><button class="btn sm ${state.selected===x.d.id?"":"ghost"}" data-pick="${x.d.id}">選此藥核對</button></div></div>`).join("")}
   <p class="small muted">相似度為外觀特徵加權分數（顏色 35、形狀 25、劑型 10、刻痕 30），不是正確機率。</p></div>`;
 }
@@ -527,14 +527,14 @@ function eduHTML(d){
   <div class="edu">${S.map(([n,t,b])=>`<section><h4><small>${n}</small>${t}</h4><div>${b}</div></section>`).join("")}</div>
   <div class="only-pro"><div class="panel pro" style="margin-top:10px"><h3>醫護專業資訊</h3><dl class="kv"><dt>藥理分類</dt><dd>${esc(d.klass)}</dd><dt>作用機轉</dt><dd>${esc(d.mechanism)}</dd><dt>臨床劑量參考</dt><dd>${esc(d.proDose)}</dd><dt>腎功能</dt><dd>${esc(d.renal)}</dd><dt>肝功能</dt><dd>${esc(d.hepatic)}</dd><dt>高警訊</dt><dd>${d.highAlert?"是：給藥前需雙人獨立核對":"否"}</dd></dl>
     <div class="row"><button class="btn sm" data-log="${d.id}">記錄本次病人衛教</button><span class="small muted">紀錄含 Teach-back 結果，供衛教成效分析。</span></div></div></div>
-  <p class="small muted">資料來源：AI-MedCare 示範藥品知識庫（${esc(DB._meta.updated)}）· 審核狀態：示範資料，未經藥師審核。正式版改接食藥署仿單與院內藥劑部衛教資料。</p>`;
+  <p class="small muted">許可證資料來源：食藥署公開資料 · 衛教內容：AI-MedCare 知識庫（${esc(DB._meta.updated)}），尚未經藥師審核。正式版改接食藥署仿單與院內藥劑部衛教資料。</p>`;
 }
 
 V.drugs=()=>{
   const sel=(location.hash.split("-")[1])||null; const d=sel&&byId[sel];
   if(d) return `<div class="row"><a class="btn ghost sm" href="#drugs">← 返回藥品列表</a></div>
    <div class="panel"><div class="row">${pillSVG(d,72)}<div style="min-width:0;flex:1"><h2>${esc(d.zh)} ${esc(d.strength)}</h2><p class="muted">${esc(d.en)} · 商品名 ${esc(d.brand)}</p></div></div>
-   <dl class="kv"><dt>許可證字號</dt><dd class="mono">${esc(d.license)}</dd><dt>健保藥品代碼</dt><dd class="mono">${esc(d.nhi)}</dd><dt>學名／成分</dt><dd>${esc(d.en)} ${esc(d.strength)}</dd><dt>外觀特徵</dt><dd>${d.color.map(c=>COLORS[c]).join("／")}・${SHAPES[d.shape]}・${FORMS[d.form]}・刻痕 <span class="mono">${esc(d.imprint)}</span>${d.score?"・有切割線":""}</dd><dt>藥物分類</dt><dd>${esc(d.klass)}</dd><dt>品質管理</dt><dd>來源：示範資料 · 審核藥師：未審核 · 更新 ${esc(DB._meta.updated)}</dd></dl>
+   <dl class="kv"><dt>許可證字號</dt><dd class="mono">${esc(d.license)} <span class="chip ok">食藥署公開資料</span></dd>${d.product?`<dt>產品名稱</dt><dd>${esc(d.product.zh)}<br><span class="small muted">${esc(d.product.en)}</span></dd><dt>劑型／類別</dt><dd>${esc(d.product.dosageForm)}・${esc(d.product.category)}</dd><dt>主成分</dt><dd>${esc(d.product.ingredient)}</dd><dt>申請商</dt><dd>${esc(d.product.applicant)}</dd><dt>製造廠</dt><dd>${esc(d.product.manufacturer)}（${esc(d.product.country)}）</dd><dt>許可證效期</dt><dd class="mono">${esc(d.product.validUntil)}</dd>`:""}<dt>健保藥品代碼</dt><dd>${esc(d.nhi)}</dd><dt>外觀特徵</dt><dd>${d.color.map(c=>COLORS[c]).join("／")}・${SHAPES[d.shape]}・${FORMS[d.form]}・刻痕 <span class="mono">${esc(d.imprint)}</span>${d.score?"・有切割線":""} ${d.appearanceVerified?'<span class="chip ok">官方外觀</span>':'<span class="chip warn">示意，待匯入官方外觀圖</span>'}</dd><dt>藥物分類</dt><dd>${esc(d.klass)}</dd><dt>資料來源</dt><dd class="small">${esc(d.product?d.product.source:"示範資料")} · 衛教內容審核藥師：未審核</dd></dl>
    <div class="row"><button class="btn sm" data-addmed="${d.id}">加入我的用藥</button><button class="btn ghost sm" data-ask="${d.id}">詢問衛教助理</button></div></div>
    <div class="panel"><h3>個人化藥物衛教（12 項）</h3>${eduHTML(d)}</div>${foot()}`;
   return `<h2>臺灣藥品資料庫</h2>
