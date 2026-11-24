@@ -143,6 +143,11 @@ th{font-weight:700;color:var(--muted);font-size:.8rem;letter-spacing:.04em}
 .msg.a.urgent{background:var(--danger-soft);border:1px solid var(--danger)}
 .qs{display:flex;gap:6px;flex-wrap:wrap}
 .qs button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:.85rem}
+.rem-box{display:flex;flex-direction:column;gap:10px;border:1px dashed var(--accent);border-radius:10px;padding:12px;background:var(--accent-soft)}
+.rem-modal{position:fixed;inset:0;z-index:50;background:rgba(20,10,30,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.rem-card{background:var(--surface);color:var(--fg);border-radius:16px;padding:20px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.rem-card h3{font-size:1.3rem}
+.visits{font-variant-numeric:tabular-nums}
 .check{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--accent)}
 footer.ft{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:var(--muted)}
@@ -210,12 +215,17 @@ const state={
   profile:store.get("profile",{allergy:[],pregnant:false,lactation:false,elderly:true,child:false,renal:false,hepatic:false}),
   taken:store.get("taken",{}),
   eduLog:store.get("eduLog",[]),
+  rem:store.get("rem",{on:false,tune:"musicbox",vol:0.7,voice:true}),
+  fired:store.get("fired",{}),
+  snooze:store.get("snooze",{}),
   scan:null, selected:null, confirmed:false,
   chat:[], chatDrug:null
 };
-function save(){store.set("mode",state.mode);store.set("big",state.big);store.set("hc",state.hc);store.set("meds",state.meds);store.set("profile",state.profile);store.set("taken",state.taken);store.set("eduLog",state.eduLog)}
+function save(){store.set("rem",state.rem);store.set("fired",state.fired);store.set("snooze",state.snooze);store.set("mode",state.mode);store.set("big",state.big);store.set("hc",state.hc);store.set("meds",state.meds);store.set("profile",state.profile);store.set("taken",state.taken);store.set("eduLog",state.eduLog)}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,2600)}
 
+const localDay=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const hhmm=(d=new Date())=>String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
 /* ---------- vocab ---------- */
 const COLORS={white:"白色",yellow:"黃色",orange:"橘色",pink:"粉紅色",red:"紅色",brown:"棕色",green:"綠色",blue:"藍色",purple:"紫色",grey:"灰色",black:"黑色"};
 const SWATCH={white:"#f7f7f2",yellow:"#f4d03f",orange:"#f0a35e",pink:"#f2a7b8",red:"#d64541",brown:"#8d6748",green:"#6fbf73",blue:"#5b8fd9",purple:"#9b72cf",grey:"#a0a4a8",black:"#333"};
@@ -409,7 +419,7 @@ function sampleImage(id,bgDark=true){
 const V={};
 V.home=()=>{
   const ids=state.meds.map(m=>m.id);const al=safetyCheck(ids,{allergy:state.profile.allergy});const major=al.filter(a=>a.level!=="minor").length;
-  const today=new Date().toISOString().slice(0,10);const doses=state.meds.flatMap(m=>m.times.map(t=>({m,t})));const done=doses.filter(x=>state.taken[today+x.m.id+x.t]).length;
+  const today=localDay();const doses=state.meds.flatMap(m=>m.times.map(t=>({m,t})));const done=doses.filter(x=>state.taken[today+x.m.id+x.t]).length;
   return `
   <section class="hero">
     <div style="display:flex;flex-direction:column;gap:12px">
@@ -618,7 +628,7 @@ V.assistant=()=>{
 };
 
 V.mymeds=()=>{
-  const ids=state.meds.map(m=>m.id);const alerts=safetyCheck(ids,state.profile);const today=new Date().toISOString().slice(0,10);
+  const ids=state.meds.map(m=>m.id);const alerts=safetyCheck(ids,state.profile);const today=localDay();
   const doses=state.meds.flatMap(m=>m.times.map(t=>({m,t}))).sort((a,b)=>a.t.localeCompare(b.t));
   return `<h2>我的用藥與安全警示</h2>
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start">
@@ -633,7 +643,18 @@ V.mymeds=()=>{
     </form></div>
   <div class="panel"><h3>今日服藥提醒</h3>
     ${doses.map(x=>{const k=today+x.m.id+x.t;return `<label class="check"><input type="checkbox" data-take="${k}" ${state.taken[k]?"checked":""}><span><b class="mono">${x.t}</b> ${esc(byId[x.m.id].zh)} ${esc(x.m.dose)}<br><span class="small muted">${esc(byId[x.m.id].timing)}</span></span></label>`}).join("")||'<p class="small muted">加入藥物後會顯示今日服藥時間。</p>'}
-    <span class="small muted">勾選後記錄為已服用。安裝為手機桌面 App 後可接收推播提醒（正式版）。</span></div>
+    <span class="small muted">勾選後記錄為已服用。</span>
+    <div class="rem-box">
+      <div class="row" style="justify-content:space-between"><b>🎵 用藥提醒音樂</b>
+        <label class="row small" style="gap:6px;cursor:pointer"><input type="checkbox" id="remOn" ${state.rem.on?"checked":""} style="width:20px;height:20px;accent-color:var(--accent)"> 啟用</label></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))">
+        <label class="f">提醒音樂<select id="remTune">${Object.entries(TUNES).map(([k,t])=>`<option value="${k}" ${state.rem.tune===k?"selected":""}>${t.name}</option>`).join("")}</select></label>
+        <label class="f">音量<input type="range" id="remVol" min="0.1" max="1" step="0.1" value="${state.rem.vol}"></label>
+      </div>
+      <label class="row small" style="gap:6px"><input type="checkbox" id="remVoice" ${state.rem.voice?"checked":""}> 音樂後語音唸出藥名</label>
+      <div class="row"><button class="btn ghost sm" id="remTest">▶ 試聽</button><button class="btn ghost sm" id="remNotif">允許通知</button><span class="small" id="remNext">${nextDoseText()}</span></div>
+      <span class="small muted">到了服藥時間會播放音樂、跳出提醒並震動（手機支援時）。請保持本網頁開啟（可切到背景）；手機鎖定或關閉網頁時，瀏覽器無法播放音樂。</span>
+    </div></div>
   </div>
   <div class="panel"><h3>個人狀況（用於安全檢核）</h3>
     <div class="row">${[["pregnant","懷孕"],["lactation","哺乳"],["elderly","65 歲以上"],["child","兒童"],["renal","腎功能不佳"],["hepatic","肝功能不佳"]].map(([k,t])=>`<label class="chip" style="cursor:pointer;padding:6px 12px"><input type="checkbox" data-prof="${k}" ${state.profile[k]?"checked":""}> ${t}</label>`).join("")}</div>
@@ -710,7 +731,7 @@ V.about=()=>`<div class="panel" style="gap:14px">
 <div class="panel"><h3>使用聲明</h3><p class="small">本系統為研究與教學用原型，藥品外觀、許可證字號與條碼為示範資料。辨識結果與衛教內容不能取代醫師診斷、藥師調劑與護理給藥核對。正式上線前須依《個人資料保護法》、《醫療法》、《醫療器材管理法》（SaMD 判定）、ISO 14971、IEC 62304、ISO 27001 進行評估與驗證。</p></div>
 ${foot()}`;
 
-function foot(){return `<footer class="ft"><span>© 2026 <b>CY團隊</b> 開發 · AI-MedCare ${esc(DB._meta.version)}</span><span>本系統不取代醫師、藥師專業判斷 · 緊急狀況請撥 119</span></footer>`}
+function foot(){return `<footer class="ft"><span>© 2026 <b>CY團隊</b> 開發 · AI-MedCare ${esc(DB._meta.version)}</span><span class="visits" data-visits>👁 瀏覽人次 <b>${visitText()}</b></span><span>本系統不取代醫師、藥師專業判斷 · 緊急狀況請撥 119</span></footer>`}
 
 /* ---------- render & events ---------- */
 // Fall back to the drawn illustration when an official photo cannot load (blocked network, offline)
@@ -846,6 +867,87 @@ document.addEventListener("submit",e=>{e.preventDefault();
 });
 function ask(q){state.chat.push({r:"u",text:q});state.chat.push({r:"a",...answer(q)});render();setTimeout(()=>$("#chatIn")?.focus(),0)}
 
-applyPrefs();render();
+/* ---------- reminder music (Web Audio, original melodies) ---------- */
+const TUNES={
+  musicbox:{name:"音樂盒",wave:"sine",bpm:132,notes:"E5 G5 C6 G5 A5 G5 E5 - D5 E5 G5 E5 C5 - - - E5 G5 C6 D6 E6 D6 C6 - A5 G5 E5 D5 C5 - - -"},
+  piano:{name:"輕柔鋼琴",wave:"triangle",bpm:96,notes:"C5 E5 G5 E5 F5 A5 C6 A5 G5 E5 C5 E5 D5 - - - C5 E5 G5 C6 B5 G5 D5 G5 C5 - - -"},
+  chime:{name:"叮咚鈴聲",wave:"sine",bpm:80,notes:"E6 C6 D6 G5 - G5 D6 E6 C6 - - -"},
+  morning:{name:"清晨小調",wave:"triangle",bpm:116,notes:"G4 C5 E5 G5 E5 C5 D5 F5 A5 F5 D5 B4 C5 E5 G5 C6 - G5 E5 C5 - - -"}
+};
+let actx=null,playing=null;
+function noteHz(n){const m=/^([A-G])(#?)(\d)$/.exec(n);if(!m)return 0;const i={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]?1:0);return 440*Math.pow(2,((+m[3]+1)*12+i-69)/12)}
+function stopTune(){if(playing){playing.forEach(o=>{try{o.stop()}catch(e){}});playing=null}}
+function playTune(key,loops=1){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==="suspended")actx.resume()}catch(e){toast("此瀏覽器無法播放音樂");return 0}
+  stopTune();const t=TUNES[key]||TUNES.musicbox,beat=60/t.bpm/2,seq=t.notes.split(/\s+/),vol=state.rem.vol;playing=[];
+  const master=actx.createGain();master.gain.value=vol*.5;master.connect(actx.destination);let at=actx.currentTime+.05;
+  for(let l=0;l<loops;l++)for(const n of seq){const f=noteHz(n);if(f){[1,2].forEach((h,hi)=>{const o=actx.createOscillator(),g=actx.createGain();o.type=hi?"sine":t.wave;o.frequency.value=f*h;
+    g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(hi?.12:.6,at+.01);g.gain.exponentialRampToValueAtTime(.001,at+beat*3.2);
+    o.connect(g).connect(master);o.start(at);o.stop(at+beat*3.3);playing.push(o)})}at+=beat}
+  return (at-actx.currentTime)*1000;
+}
+function dueDoses(){const day=localDay(),now=hhmm(),out=[];
+  state.meds.forEach(m=>m.times.forEach(t=>{const k=day+m.id+t;if(state.taken[k]||state.fired[k])return;
+    const sn=state.snooze[k];if(sn?now>=sn:now>=t&&now<=addMin(t,30))out.push({k,m,t})}));return out}
+function addMin(t,n){const [h,m]=t.split(":").map(Number);const x=h*60+m+n;return String(Math.floor(x/60)%24).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
+function nextDoseText(){const day=localDay(),now=hhmm();const up=state.meds.flatMap(m=>m.times.filter(t=>t>now&&!state.taken[day+m.id+t]).map(t=>({t,m}))).sort((a,b)=>a.t.localeCompare(b.t))[0];
+  return up?`下一次：<b class="mono">${up.t}</b> ${esc(byId[up.m.id].zh)}`:"今天已沒有待服藥物"}
+function fireReminder(list){
+  const names=list.map(x=>`${byId[x.m.id].zh} ${x.m.dose}`).join("、");
+  list.forEach(x=>{state.fired[x.k]=true;delete state.snooze[x.k]});save();
+  const ms=playTune(state.rem.tune,2);
+  if(state.rem.voice)setTimeout(()=>speak(`現在是服藥時間，請服用${names}。`),Math.min(ms||0,12000)+300);
+  try{navigator.vibrate&&navigator.vibrate([400,200,400,200,400])}catch(e){}
+  try{if("Notification" in window&&Notification.permission==="granted"){const body="請服用："+names;
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification("💊 服藥時間到了",{body,tag:"aimc-dose",renotify:true,icon:"icon.svg"})).catch(()=>new Notification("💊 服藥時間到了",{body}));
+    else new Notification("💊 服藥時間到了",{body})}}catch(e){}
+  document.querySelector(".rem-modal")?.remove();
+  const m=document.createElement("div");m.className="rem-modal";m.setAttribute("role","alertdialog");m.setAttribute("aria-label","服藥提醒");
+  m.innerHTML=`<div class="rem-card"><span class="eyebrow">服藥提醒 · ${hhmm()}</span><h3>💊 服藥時間到了</h3>
+    ${list.map(x=>`<div class="row" style="flex-wrap:nowrap;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)">${drugImg(byId[x.m.id],44)}<div><b>${esc(byId[x.m.id].zh)} ${esc(x.m.dose)}</b><br><span class="small muted">${esc(byId[x.m.id].timing)}</span></div></div>`).join("")}
+    <div class="row"><button class="btn" id="remTaken">✓ 已服用</button><button class="btn ghost" id="remSnooze">10 分鐘後再提醒</button><button class="btn ghost" id="remClose">關閉</button></div></div>`;
+  document.body.appendChild(m);setTimeout(checkImgs,7000);
+  m.querySelector("#remTaken").onclick=()=>{list.forEach(x=>state.taken[x.k]=true);save();stopTune();stopSpeak();m.remove();render();toast("已記錄服藥")};
+  m.querySelector("#remSnooze").onclick=()=>{list.forEach(x=>{delete state.fired[x.k];state.snooze[x.k]=addMin(hhmm(),10)});save();stopTune();stopSpeak();m.remove();toast("10 分鐘後再提醒")};
+  m.querySelector("#remClose").onclick=()=>{stopTune();stopSpeak();m.remove()};
+}
+function tick(){if(state.rem.on){const d=dueDoses();if(d.length)fireReminder(d)}const n=$("#remNext");if(n)n.innerHTML=nextDoseText()}
+setInterval(tick,15000);
+document.addEventListener("change",e=>{const t=e.target;
+  if(t.id==="remOn"){state.rem.on=t.checked;save();if(t.checked){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(err){}toast("已啟用提醒音樂，請保持網頁開啟")}}
+  if(t.id==="remTune"){state.rem.tune=t.value;save();playTune(t.value)}
+  if(t.id==="remVol"){state.rem.vol=+t.value;save()}
+  if(t.id==="remVoice"){state.rem.voice=t.checked;save()}
+});
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.id==="remTest"){if(playing){stopTune();b.textContent="▶ 試聽"}else{const ms=playTune(state.rem.tune);b.textContent="■ 停止";setTimeout(()=>{b.textContent="▶ 試聽";playing=null},ms)}}
+  if(b.id==="remNotif"){if(!("Notification" in window)){toast("此瀏覽器不支援通知");return}Notification.requestPermission().then(p=>toast(p==="granted"?"已允許通知":"未允許通知，仍會播放音樂與跳出提醒"))}
+});
+window.addEventListener("hashchange",stopTune);
+
+/* ---------- visit counter ---------- */
+// Order: own backend (/api/visits) → CounterAPI v2 public counter → visitor-badge image. One count per browser session.
+let visits=null,badge=null;
+function visitText(){return visits==null?"—":Number(visits).toLocaleString("zh-TW")}
+function showVisits(){document.querySelectorAll("[data-visits]").forEach(el=>{
+  if(visits!=null){el.hidden=false;el.querySelector("b").textContent=visitText()}
+  else if(badge){el.hidden=false;el.innerHTML=`👁 <img src="${badge}" alt="瀏覽人次" height="20" style="vertical-align:middle" referrerpolicy="no-referrer" onerror="this.parentNode.hidden=true">`}
+  else el.hidden=true})}
+function findCount(o){if(typeof o==="number")return o;if(!o||typeof o!=="object")return null;
+  for(const k of ["count","value","up_count","total"])if(typeof o[k]==="number")return o[k];
+  for(const v of Object.values(o)){const r=findCount(v);if(r!=null)return r}return null}
+async function loadVisits(){
+  let counted=false;try{counted=sessionStorage.getItem("aimc:counted")==="1"}catch(e){}
+  const done=()=>{try{sessionStorage.setItem("aimc:counted","1")}catch(e){}};
+  const tries=[];
+  if(location.protocol.startsWith("http"))tries.push(async()=>{const r=await fetch("api/visits",{method:counted?"GET":"POST"});if(!r.ok)throw 0;return findCount(await r.json())});
+  tries.push(async()=>{const r=await fetch(`https://api.counterapi.dev/v2/cy-team/ai-medcare-visits${counted?"":"/up"}`);if(!r.ok)throw 0;return findCount(await r.json())});
+  for(const t of tries){try{const c=await t();if(typeof c==="number"){visits=c;done();showVisits();return}}catch(e){}}
+  if(location.protocol==="https:"){badge="https://visitor-badge.laobi.icu/badge?page_id=changfrinng.ai-medcare&left_text=%E7%80%8F%E8%A6%BD%E4%BA%BA%E6%AC%A1&left_color=%235b2a86&right_color=%23c4a0f0";done()}
+  showVisits();
+}
+const _render=render;render=function(){_render();showVisits()};
+
+applyPrefs();render();loadVisits();tick();
 if("serviceWorker" in navigator && location.protocol.startsWith("http") && document.querySelector('link[rel="manifest"]')){navigator.serviceWorker.register("sw.js").catch(()=>{})}
 </script>

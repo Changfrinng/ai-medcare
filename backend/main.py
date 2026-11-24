@@ -253,5 +253,28 @@ def fhir_medication_knowledge(drug_id: str):
     }
 
 
+# ---------- visit counter (simple file-backed; use Redis/PostgreSQL in production) ----------
+VISITS_FILE = ROOT / "backend" / "visits.json"
+
+
+def _read_visits() -> int:
+    try:
+        return int(json.loads(VISITS_FILE.read_text())["count"])
+    except Exception:
+        return 0
+
+
+@app.get("/api/visits")
+def get_visits():
+    return {"count": _read_visits()}
+
+
+@app.post("/api/visits")
+def add_visit():
+    n = _read_visits() + 1
+    VISITS_FILE.write_text(json.dumps({"count": n}))
+    return {"count": n}
+
+
 # Serve the PWA at "/"
 app.mount("/", StaticFiles(directory=ROOT / "frontend", html=True), name="frontend")

@@ -29,3 +29,8 @@ def test_chat_urgent_and_rag():
 def test_fhir_and_frontend():
     assert c.get("/fhir/MedicationKnowledge/warfarin").json()["resourceType"] == "MedicationKnowledge"
     assert "CY團隊" in c.get("/").text
+
+def test_visits():
+    a = c.get("/api/visits").json()["count"]
+    b = c.post("/api/visits").json()["count"]
+    assert b == a + 1
