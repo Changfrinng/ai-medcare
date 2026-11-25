@@ -19,7 +19,7 @@ def test_safety_major_interaction_and_allergy():
     r = c.post("/api/safety-check", json={"drug_ids": ["warfarin", "aspirin", "amoxicillin"], "profile": {"allergy": ["penicillin"]}}).json()
     titles = [a["title"] for a in r["alerts"]]
     assert r["alerts"][0]["level"] == "major"
-    assert any("過敏" in t for t in titles) and any("華法林 ＋ 阿斯匹靈" in t for t in titles)
+    assert any("過敏" in t for t in titles) and any("Warfarin ＋ Aspirin" in t for t in titles)
 
 def test_chat_urgent_and_rag():
     assert c.post("/api/chat", json={"question": "我胸痛"}).json()["urgent"]
@@ -38,3 +38,9 @@ def test_visits():
 def test_food_interactions():
     r = c.get("/api/food-interactions", params={"drug_ids": "simvastatin,warfarin", "foods": "grapefruit"}).json()
     assert r["interactions"][0]["drug"] == "simvastatin" and r["interactions"][0]["level"] == "major"
+
+def test_chat_chinese_alias_and_english_names():
+    r = c.post("/api/chat", json={"question": "Clopidogrel 可以跟 Omeprazole 一起吃嗎"}).json()
+    assert r["sources"][0]["drug"] == "clopidogrel"
+    for d in c.get("/api/drugs").json():
+        assert d["zh"] == d["en"]

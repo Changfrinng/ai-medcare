@@ -1,5 +1,5 @@
 // AI-MedCare service worker (CY團隊) — offline cache for the app shell
-const CACHE = "aimc-v0.1.2";
+const CACHE = "aimc-v0.1.3";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {

@@ -2,16 +2,16 @@
   "_meta": {
     "name": "AI-MedCare 示範藥品知識庫",
     "developer": "CY團隊",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "updated": "2026-11-24",
     "notice": "許可證、品名、廠商資料來自食藥署「全部藥品許可證」資料集；顏色、形狀、刻痕、尺寸與外觀照片來自食藥署「藥品外觀」資料集（皆於 2026-11-24 下載，依政府資料開放授權條款第1版使用）。每種成分選一個有效許可證作為代表產品，同成分其他廠牌外觀可能不同。健保代碼待串接健保署資料；臨床衛教內容為一般藥學知識摘要，正式上線前須由藥師審核。"
   },
   "drugs": [
     {
       "id": "acetaminophen",
-      "zh": "乙醯胺酚",
+      "zh": "Acetaminophen (Paracetamol)",
       "en": "Acetaminophen (Paracetamol)",
-      "brand": "普拿疼膜衣錠５００毫克",
+      "brand": "PANADOL FILM COATED CAPLETS 500MG",
       "strength": "500 mg",
       "license": "衛署藥輸字第023624號",
       "nhi": "待串接健保署",
@@ -54,7 +54,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "服用乙醯胺酚期間，下列哪一項最應避免？",
+          "q": "服用 Acetaminophen 期間，下列哪一項最應避免？",
           "o": [
             "喝溫開水",
             "飲酒",
@@ -73,7 +73,7 @@
         }
       ],
       "product": {
-        "zh": "普拿疼膜衣錠５００毫克",
+        "zh": "PANADOL FILM COATED CAPLETS 500MG",
         "en": "PANADOL FILM COATED CAPLETS 500MG",
         "dosageForm": "膜衣錠",
         "category": "醫師藥師藥劑生指示藥品",
@@ -88,13 +88,17 @@
       "imprint2": "",
       "sizeMm": "19",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/38e1b5c6-3a40-4dec-b1e4-46d20c394742?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "乙醯胺酚",
+        "普拿疼"
+      ]
     },
     {
       "id": "ibuprofen",
-      "zh": "布洛芬",
+      "zh": "Ibuprofen",
       "en": "Ibuprofen",
-      "brand": "依炎痛膜衣錠400毫克",
+      "brand": "IPU F.C. Tablets 400mg",
       "strength": "400 mg",
       "license": "衛部藥製字第060886號",
       "nhi": "待串接健保署",
@@ -141,7 +145,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "布洛芬建議在什麼時候服用？",
+          "q": "Ibuprofen 建議在什麼時候服用？",
           "o": [
             "空腹",
             "飯後或與食物一起",
@@ -160,7 +164,7 @@
         }
       ],
       "product": {
-        "zh": "依炎痛膜衣錠400毫克",
+        "zh": "IPU F.C. Tablets 400mg",
         "en": "IPU F.C. Tablets 400mg",
         "dosageForm": "膜衣錠",
         "category": "醫師藥師藥劑生指示藥品",
@@ -175,13 +179,17 @@
       "imprint2": "",
       "sizeMm": "15",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/9789fc02-f117-4b11-8f41-eb8688d1a5bf?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "布洛芬",
+        "依炎痛"
+      ]
     },
     {
       "id": "aspirin",
-      "zh": "阿斯匹靈（低劑量）",
+      "zh": "Aspirin (low dose)",
       "en": "Aspirin (low dose)",
-      "brand": "\"拜耳\" 阿斯匹林腸溶膜衣錠100毫克",
+      "brand": "ASPIRIN PROTECT 100",
       "strength": "100 mg",
       "license": "衛署藥輸字第024025號",
       "nhi": "待串接健保署",
@@ -209,7 +217,7 @@
       "serious": [
         "黑便、吐血（腸胃出血）",
         "突發劇烈頭痛、意識改變（腦出血）",
-        "氣喘發作、呼吸困難（阿斯匹靈過敏）"
+        "氣喘發作、呼吸困難（Aspirin 過敏）"
       ],
       "missed": "當天想起時補服；若已接近隔天服藥時間則略過，不可服用兩倍劑量。",
       "food": "避免飲酒。銀杏、魚油、高劑量維生素 E 等保健食品可能增加出血傾向，使用前請告知藥師。",
@@ -226,7 +234,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "低劑量阿斯匹靈的主要用途是？",
+          "q": "低劑量 Aspirin 的主要用途是？",
           "o": [
             "退燒",
             "預防血栓",
@@ -245,7 +253,7 @@
         }
       ],
       "product": {
-        "zh": "\"拜耳\" 阿斯匹林腸溶膜衣錠100毫克",
+        "zh": "ASPIRIN PROTECT 100",
         "en": "ASPIRIN PROTECT 100",
         "dosageForm": "腸溶膜衣錠",
         "category": "須由醫師處方使用",
@@ -260,13 +268,18 @@
       "imprint2": "",
       "sizeMm": "8",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/29e601c3-2783-4e64-8a53-8d93fed2ae9e?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "阿斯匹靈",
+        "阿斯匹林",
+        "拜阿司匹靈"
+      ]
     },
     {
       "id": "clopidogrel",
-      "zh": "氯吡格雷",
+      "zh": "Clopidogrel",
       "en": "Clopidogrel",
-      "brand": "保栓通膜衣錠75毫克",
+      "brand": "PLAVIX FILM-COATED TABLETS 75MG",
       "strength": "75 mg",
       "license": "衛署藥輸字第022932號",
       "nhi": "待串接健保署",
@@ -330,7 +343,7 @@
         }
       ],
       "product": {
-        "zh": "保栓通膜衣錠75毫克",
+        "zh": "PLAVIX FILM-COATED TABLETS 75MG",
         "en": "PLAVIX FILM-COATED TABLETS 75MG",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -345,13 +358,17 @@
       "imprint2": "1171",
       "sizeMm": "8",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/1613c7f4-0a23-4190-a1f0-e5c6f1c76b6e?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "氯吡格雷",
+        "保栓通"
+      ]
     },
     {
       "id": "warfarin",
-      "zh": "華法林",
+      "zh": "Warfarin",
       "en": "Warfarin",
-      "brand": "“政德”可化凝錠 5 毫克",
+      "brand": "Cofarin Tablets 5 mg \"Gentle\"",
       "strength": "5 mg",
       "license": "衛署藥製字第055271號",
       "nhi": "待串接健保署",
@@ -397,7 +414,7 @@
       "highAlert": true,
       "quiz": [
         {
-          "q": "服用華法林時，飲食原則為何？",
+          "q": "服用 Warfarin 時，飲食原則為何？",
           "o": [
             "完全不吃綠色蔬菜",
             "保持穩定，不要突然大量增減",
@@ -416,8 +433,8 @@
         }
       ],
       "product": {
-        "zh": "“政德”可化凝錠 5 毫克",
-        "en": "Cofarin tablets 5 mg“Gentle”",
+        "zh": "Cofarin Tablets 5 mg \"Gentle\"",
+        "en": "Cofarin Tablets 5 mg \"Gentle\"",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
         "ingredient": "WARFARIN SODIUM CLATHRATE",
@@ -431,13 +448,17 @@
       "imprint2": "183 5",
       "sizeMm": "8.2",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/692394b0-6543-42bc-951b-ed7f73f09859?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "華法林",
+        "可化凝"
+      ]
     },
     {
       "id": "amlodipine",
-      "zh": "氨氯地平",
+      "zh": "Amlodipine",
       "en": "Amlodipine",
-      "brand": "脈優錠５毫克",
+      "brand": "NORVASC TABLETS 5MG",
       "strength": "5 mg",
       "license": "衛署藥輸字第021571號",
       "nhi": "待串接健保署",
@@ -502,7 +523,7 @@
         }
       ],
       "product": {
-        "zh": "脈優錠５毫克",
+        "zh": "NORVASC TABLETS 5MG",
         "en": "NORVASC TABLETS 5MG",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -517,13 +538,17 @@
       "imprint2": "AML 5",
       "sizeMm": "9",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/24f4b518-5e8c-4de0-8240-fadde708cee0?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "氨氯地平",
+        "脈優"
+      ]
     },
     {
       "id": "losartan",
-      "zh": "洛沙坦",
+      "zh": "Losartan",
       "en": "Losartan",
-      "brand": "可悅您膜衣錠50毫克",
+      "brand": "COZAAR F.C. TABLETS 50MG",
       "strength": "50 mg",
       "license": "衛署藥輸字第021914號",
       "nhi": "待串接健保署",
@@ -569,7 +594,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "服用洛沙坦時，下列何者應先詢問醫師？",
+          "q": "服用 Losartan 時，下列何者應先詢問醫師？",
           "o": [
             "使用低鈉鹽（含鉀代鹽）",
             "喝白開水",
@@ -588,7 +613,7 @@
         }
       ],
       "product": {
-        "zh": "可悅您膜衣錠50毫克",
+        "zh": "COZAAR F.C. TABLETS 50MG",
         "en": "COZAAR F.C. TABLETS 50MG",
         "dosageForm": "膜衣錠",
         "category": "須由醫師處方使用",
@@ -603,13 +628,17 @@
       "imprint2": "",
       "sizeMm": "11",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/e432dd81-fd81-4ab1-9ce1-afc0f42b6bf2?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "洛沙坦",
+        "可悅您"
+      ]
     },
     {
       "id": "metformin",
-      "zh": "二甲雙胍",
+      "zh": "Metformin",
       "en": "Metformin",
-      "brand": "美克糖錠500毫克",
+      "brand": "ANKOMIN TABLETS 500MG",
       "strength": "500 mg",
       "license": "衛署藥製字第047086號",
       "nhi": "待串接健保署",
@@ -621,7 +650,7 @@
       "shape": "oblong",
       "imprint": "SYN 500",
       "score": true,
-      "klass": "口服降血糖藥（雙胍類）",
+      "klass": "口服降血糖藥（biguanide）",
       "groups": [
         "antidiabetic"
       ],
@@ -653,7 +682,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "二甲雙胍建議什麼時候服用？",
+          "q": "Metformin 建議什麼時候服用？",
           "o": [
             "與餐一起或飯後",
             "半夜",
@@ -672,7 +701,7 @@
         }
       ],
       "product": {
-        "zh": "美克糖錠500毫克",
+        "zh": "ANKOMIN TABLETS 500MG",
         "en": "ANKOMIN TABLETS 500MG",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -687,13 +716,17 @@
       "imprint2": "",
       "sizeMm": "16",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/8efc000b-7b96-429b-955a-99a7c01218ca?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "二甲雙胍",
+        "美克糖"
+      ]
     },
     {
       "id": "atorvastatin",
-      "zh": "阿托伐他汀",
+      "zh": "Atorvastatin",
       "en": "Atorvastatin",
-      "brand": "立普妥　膜衣錠20毫克",
+      "brand": "LIPITOR FILM-COATED TABLETS 20MG",
       "strength": "20 mg",
       "license": "衛署藥輸字第022890號",
       "nhi": "待串接健保署",
@@ -756,7 +789,7 @@
         }
       ],
       "product": {
-        "zh": "立普妥　膜衣錠20毫克",
+        "zh": "LIPITOR FILM-COATED TABLETS 20MG",
         "en": "LIPITOR FILM-COATED TABLETS 20MG",
         "dosageForm": "膜衣錠",
         "category": "須由醫師處方使用",
@@ -771,13 +804,17 @@
       "imprint2": "20",
       "sizeMm": "7",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/3ce30fb2-6e31-4f91-a824-76c77b454f9e?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "阿托伐他汀",
+        "立普妥"
+      ]
     },
     {
       "id": "simvastatin",
-      "zh": "辛伐他汀",
+      "zh": "Simvastatin",
       "en": "Simvastatin",
-      "brand": "\"生達\" 淨脂膜衣錠20毫克",
+      "brand": "VATATIN F.C. TABLETS 20MG \"STANDARD\"",
       "strength": "20 mg",
       "license": "衛署藥製字第047348號",
       "nhi": "待串接健保署",
@@ -821,7 +858,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "辛伐他汀建議什麼時候服用？",
+          "q": "Simvastatin 建議什麼時候服用？",
           "o": [
             "晚上",
             "早上空腹",
@@ -830,7 +867,7 @@
           "a": 0
         },
         {
-          "q": "服用辛伐他汀應避免哪種飲料？",
+          "q": "服用 Simvastatin 應避免哪種飲料？",
           "o": [
             "葡萄柚汁",
             "溫開水",
@@ -840,7 +877,7 @@
         }
       ],
       "product": {
-        "zh": "\"生達\" 淨脂膜衣錠20毫克",
+        "zh": "VATATIN F.C. TABLETS 20MG \"STANDARD\"",
         "en": "VATATIN F.C. TABLETS 20MG \"STANDARD\"",
         "dosageForm": "膜衣錠",
         "category": "須由醫師處方使用",
@@ -855,13 +892,17 @@
       "imprint2": "146",
       "sizeMm": "11.2",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/7c2ac904-8a54-4d19-ada3-d9b9e4ff3cd3?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "辛伐他汀",
+        "淨脂"
+      ]
     },
     {
       "id": "omeprazole",
-      "zh": "奧美拉唑",
+      "zh": "Omeprazole",
       "en": "Omeprazole",
-      "brand": "樂酸克膠囊２０公絲",
+      "brand": "LOSEC 20MG CAPSULES",
       "strength": "20 mg",
       "license": "衛署藥輸字第017808號",
       "nhi": "待串接健保署",
@@ -906,7 +947,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "奧美拉唑最佳服用時間？",
+          "q": "Omeprazole 最佳服用時間？",
           "o": [
             "早餐前 30–60 分鐘",
             "睡前吃宵夜後",
@@ -925,7 +966,7 @@
         }
       ],
       "product": {
-        "zh": "樂酸克膠囊２０公絲",
+        "zh": "LOSEC 20MG CAPSULES",
         "en": "LOSEC 20MG CAPSULES",
         "dosageForm": "膠囊劑",
         "category": "須由醫師處方使用",
@@ -940,13 +981,17 @@
       "imprint2": "20",
       "sizeMm": "18",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/77ebcf56-9826-480a-acbd-888d9ec48d41?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "奧美拉唑",
+        "樂酸克"
+      ]
     },
     {
       "id": "allopurinol",
-      "zh": "異嘌呤醇",
+      "zh": "Allopurinol",
       "en": "Allopurinol",
-      "brand": "欣律錠100毫克",
+      "brand": "SYNORID TABLETS 100MG",
       "strength": "100 mg",
       "license": "衛署藥製字第040106號",
       "nhi": "待串接健保署",
@@ -1008,7 +1053,7 @@
         }
       ],
       "product": {
-        "zh": "欣律錠100毫克",
+        "zh": "SYNORID TABLETS 100MG",
         "en": "SYNORID TABLETS 100MG",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -1023,13 +1068,17 @@
       "imprint2": "",
       "sizeMm": "9",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/c47c59dc-5ecd-4149-8ba6-30a8b1c62b59?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "異嘌呤醇",
+        "欣律"
+      ]
     },
     {
       "id": "digoxin",
-      "zh": "地高辛（毛地黃）",
+      "zh": "Digoxin",
       "en": "Digoxin",
-      "brand": "隆我心錠",
+      "brand": "LANOXIN DIGOXIN TABLETS 0.25MG B.P.",
       "strength": "0.25 mg",
       "license": "衛署藥輸字第009554號",
       "nhi": "待串接健保署",
@@ -1041,7 +1090,7 @@
       "shape": "round",
       "imprint": "DO25",
       "score": false,
-      "klass": "強心劑（毛地黃配醣體）",
+      "klass": "強心劑（digitalis glycoside）",
       "groups": [
         "cardiac"
       ],
@@ -1056,7 +1105,7 @@
       "serious": [
         "看東西偏黃綠色或視力模糊",
         "持續嘔吐、意識混亂",
-        "心跳過慢（< 60 次/分）或心悸（毛地黃中毒徵兆）"
+        "心跳過慢（< 60 次/分）或心悸（digitalis 中毒徵兆）"
       ],
       "missed": "12 小時內想起時補服；超過則略過，不可服用兩倍劑量。",
       "food": "避免與高纖維食物或制酸劑同時服用（減少吸收），間隔約 2 小時。注意鉀離子不足會增加毒性。",
@@ -1073,7 +1122,7 @@
       "highAlert": true,
       "quiz": [
         {
-          "q": "服用地高辛前應先？",
+          "q": "服用 Digoxin 前應先？",
           "o": [
             "量脈搏",
             "喝咖啡",
@@ -1084,7 +1133,7 @@
         {
           "q": "看東西偏黃綠色代表？",
           "o": [
-            "可能毛地黃中毒，應就醫",
+            "可能 digitalis 中毒，應就醫",
             "眼睛疲勞，不用處理",
             "正常副作用"
           ],
@@ -1092,7 +1141,7 @@
         }
       ],
       "product": {
-        "zh": "隆我心錠",
+        "zh": "LANOXIN DIGOXIN TABLETS 0.25MG B.P.",
         "en": "LANOXIN DIGOXIN TABLETS 0.25MG B.P.",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -1107,13 +1156,18 @@
       "imprint2": "",
       "sizeMm": "7",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/03811180-98ba-4590-add5-adc00176cdea?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "地高辛",
+        "毛地黃",
+        "隆我心"
+      ]
     },
     {
       "id": "levothyroxine",
-      "zh": "左旋甲狀腺素",
+      "zh": "Levothyroxine",
       "en": "Levothyroxine",
-      "brand": "“德國”昂特欣錠 50 微公克",
+      "brand": "ELTROXIN TM Tablets 50 mcg",
       "strength": "50 mcg",
       "license": "衛署藥輸字第025533號",
       "nhi": "待串接健保署",
@@ -1154,7 +1208,7 @@
       "highAlert": false,
       "quiz": [
         {
-          "q": "左旋甲狀腺素最好什麼時候吃？",
+          "q": "Levothyroxine 最好什麼時候吃？",
           "o": [
             "早餐前空腹",
             "和鈣片一起",
@@ -1173,7 +1227,7 @@
         }
       ],
       "product": {
-        "zh": "“德國”昂特欣錠 50 微公克",
+        "zh": "ELTROXIN TM Tablets 50 mcg",
         "en": "ELTROXIN TM Tablets 50 mcg",
         "dosageForm": "錠劑",
         "category": "須由醫師處方使用",
@@ -1188,13 +1242,18 @@
       "imprint2": "50",
       "sizeMm": "6",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/2bfdd85b-10c9-4eb1-b52d-27daf5b98f4b?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "左旋甲狀腺素",
+        "甲狀腺素",
+        "昂特欣"
+      ]
     },
     {
       "id": "amoxicillin",
-      "zh": "安莫西林",
+      "zh": "Amoxicillin",
       "en": "Amoxicillin",
-      "brand": "\"中國化學\" 安蒙西林膠囊500毫克",
+      "brand": "AMOXICILLIN CAPSULES 500MG",
       "strength": "500 mg",
       "license": "衛署藥製字第024132號",
       "nhi": "待串接健保署",
@@ -1207,7 +1266,7 @@
       "shape": "capsule",
       "imprint": "CCP B32",
       "score": false,
-      "klass": "抗生素（盤尼西林類）",
+      "klass": "抗生素（penicillin 類）",
       "groups": [
         "penicillin",
         "antibiotic"
@@ -1236,7 +1295,7 @@
       },
       "renal": "CrCl < 30 需延長給藥間隔或減量。",
       "hepatic": "一般無需調整劑量。",
-      "proDose": "成人 500 mg q8h 或 875 mg q12h，依感染部位與醫囑。盤尼西林過敏者禁用。",
+      "proDose": "成人 500 mg q8h 或 875 mg q12h，依感染部位與醫囑。penicillin 過敏者禁用。",
       "highAlert": false,
       "quiz": [
         {
@@ -1259,7 +1318,7 @@
         }
       ],
       "product": {
-        "zh": "\"中國化學\" 安蒙西林膠囊500毫克",
+        "zh": "AMOXICILLIN CAPSULES 500MG",
         "en": "AMOXICILLIN CAPSULES 500MG",
         "dosageForm": "膠囊劑",
         "category": "須由醫師處方使用",
@@ -1274,7 +1333,11 @@
       "imprint2": "",
       "sizeMm": "22.1",
       "image": "https://mcp.fda.gov.tw/insert/shapeImg/5e7b1102-bbb6-4e29-9d67-0a948dc3b799?c=o",
-      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）"
+      "appearanceSource": "衛生福利部食品藥物管理署 藥品外觀資料集（2026-11-24 下載，政府資料開放授權條款第1版）",
+      "aliases": [
+        "安莫西林",
+        "安蒙西林"
+      ]
     }
   ],
   "interactions": [
@@ -1288,7 +1351,7 @@
       "a": "warfarin",
       "b": "ibuprofen",
       "level": "major",
-      "note": "NSAID 增加腸胃出血並可能影響 INR。止痛優先考慮乙醯胺酚（短期、低劑量）並告知醫師。"
+      "note": "NSAID 增加腸胃出血並可能影響 INR。止痛優先考慮 Acetaminophen（短期、低劑量）並告知醫師。"
     },
     {
       "a": "warfarin",
@@ -1306,7 +1369,7 @@
       "a": "warfarin",
       "b": "allopurinol",
       "level": "moderate",
-      "note": "可能增強華法林作用、INR 上升，開始或調整劑量時追蹤 INR。"
+      "note": "可能增強 Warfarin 作用、INR 上升，開始或調整劑量時追蹤 INR。"
     },
     {
       "a": "warfarin",
@@ -1330,13 +1393,13 @@
       "a": "warfarin",
       "b": "levothyroxine",
       "level": "moderate",
-      "note": "甲狀腺素劑量增加時，華法林作用可能增強，需追蹤 INR。"
+      "note": "Levothyroxine 劑量增加時，Warfarin 作用可能增強，需追蹤 INR。"
     },
     {
       "a": "aspirin",
       "b": "ibuprofen",
       "level": "moderate",
-      "note": "布洛芬可能干擾低劑量阿斯匹靈的心血管保護作用，並增加腸胃出血風險。"
+      "note": "Ibuprofen 可能干擾低劑量 Aspirin 的心血管保護作用，並增加腸胃出血風險。"
     },
     {
       "a": "aspirin",
@@ -1348,7 +1411,7 @@
       "a": "clopidogrel",
       "b": "omeprazole",
       "level": "moderate",
-      "note": "奧美拉唑抑制 CYP2C19，可能降低氯吡格雷活化與療效，可考慮改用 pantoprazole。"
+      "note": "Omeprazole 抑制 CYP2C19，可能降低 Clopidogrel 活化與療效，可考慮改用 pantoprazole。"
     },
     {
       "a": "clopidogrel",
@@ -1372,13 +1435,13 @@
       "a": "levothyroxine",
       "b": "omeprazole",
       "level": "minor",
-      "note": "胃酸減少可能降低甲狀腺素吸收，必要時依 TSH 調整劑量。"
+      "note": "胃酸減少可能降低 Levothyroxine 吸收，必要時依 TSH 調整劑量。"
     },
     {
       "a": "digoxin",
       "b": "omeprazole",
       "level": "minor",
-      "note": "可能輕度增加地高辛濃度，高齡者留意中毒徵兆。"
+      "note": "可能輕度增加 Digoxin 濃度，高齡者留意中毒徵兆。"
     },
     {
       "a": "allopurinol",
@@ -1389,13 +1452,13 @@
   ],
   "duplicateGroups": {
     "statin": "Statin 降血脂藥",
-    "nsaid": "NSAID 類（含阿斯匹靈）",
+    "nsaid": "NSAID 類（含 Aspirin）",
     "antiplatelet": "抗血小板藥",
     "antihypertensive": "降血壓藥"
   },
   "allergyGroups": {
-    "penicillin": "盤尼西林類",
-    "nsaid": "NSAID／阿斯匹靈",
+    "penicillin": "penicillin 類",
+    "nsaid": "NSAID／ Aspirin",
     "statin": "Statin 類"
   },
   "foodInteractions": [
@@ -1407,17 +1470,17 @@
         {
           "id": "simvastatin",
           "level": "major",
-          "note": "葡萄柚會抑制 CYP3A4，使辛伐他汀血中濃度明顯上升，增加肌肉病變及橫紋肌溶解風險。服藥期間應避免。"
+          "note": "葡萄柚會抑制 CYP3A4，使 Simvastatin 血中濃度明顯上升，增加肌肉病變及橫紋肌溶解風險。服藥期間應避免。"
         },
         {
           "id": "atorvastatin",
           "level": "moderate",
-          "note": "大量飲用（每天超過約 1 公升）會使阿托伐他汀濃度上升，增加肌肉痠痛風險，建議避免大量飲用。"
+          "note": "大量飲用（每天超過約 1 公升）會使 Atorvastatin 濃度上升，增加肌肉痠痛風險，建議避免大量飲用。"
         },
         {
           "id": "amlodipine",
           "level": "minor",
-          "note": "可能使氨氯地平濃度輕度上升，留意頭暈、腳踝水腫。"
+          "note": "可能使 Amlodipine 濃度輕度上升，留意頭暈、腳踝水腫。"
         }
       ]
     },
@@ -1429,7 +1492,7 @@
         {
           "id": "acetaminophen",
           "level": "major",
-          "note": "長期或大量飲酒時服用乙醯胺酚，會增加肝臟損傷風險。服藥期間避免飲酒。"
+          "note": "長期或大量飲酒時服用 Acetaminophen，會增加肝臟損傷風險。服藥期間避免飲酒。"
         },
         {
           "id": "metformin",
@@ -1486,7 +1549,7 @@
         {
           "id": "warfarin",
           "level": "moderate",
-          "note": "維生素 K 會降低華法林的抗凝血效果。不必禁食，但每天攝取量要維持穩定，避免突然大量增減。"
+          "note": "維生素 K 會降低 Warfarin 的抗凝血效果。不必禁食，但每天攝取量要維持穩定，避免突然大量增減。"
         }
       ]
     },
@@ -1532,12 +1595,12 @@
         {
           "id": "levothyroxine",
           "level": "moderate",
-          "note": "鈣、鐵、制酸劑與豆製品會減少甲狀腺素吸收，請間隔至少 4 小時。"
+          "note": "鈣、鐵、制酸劑與豆製品會減少 Levothyroxine 吸收，請間隔至少 4 小時。"
         },
         {
           "id": "digoxin",
           "level": "minor",
-          "note": "制酸劑可能減少地高辛吸收，建議間隔約 2 小時。"
+          "note": "制酸劑可能減少 Digoxin 吸收，建議間隔約 2 小時。"
         }
       ]
     },
@@ -1549,7 +1612,7 @@
         {
           "id": "levothyroxine",
           "level": "moderate",
-          "note": "咖啡會減少甲狀腺素吸收，服藥後至少等 30–60 分鐘再喝咖啡。"
+          "note": "咖啡會減少 Levothyroxine 吸收，服藥後至少等 30–60 分鐘再喝咖啡。"
         },
         {
           "id": "omeprazole",
@@ -1566,7 +1629,7 @@
         {
           "id": "losartan",
           "level": "moderate",
-          "note": "洛沙坦會使血鉀上升，再大量攝取鉀可能造成高血鉀（肌肉無力、心律不整），請先詢問醫師。"
+          "note": "Losartan 會使血鉀上升，再大量攝取鉀可能造成高血鉀（肌肉無力、心律不整），請先詢問醫師。"
         }
       ]
     },
@@ -1578,12 +1641,12 @@
         {
           "id": "digoxin",
           "level": "minor",
-          "note": "高纖食物可能減少地高辛吸收，建議與服藥時間間隔。"
+          "note": "高纖食物可能減少 Digoxin 吸收，建議與服藥時間間隔。"
         },
         {
           "id": "levothyroxine",
           "level": "minor",
-          "note": "高纖飲食可能減少甲狀腺素吸收，保持穩定飲食並依 TSH 調整。"
+          "note": "高纖飲食可能減少 Levothyroxine 吸收，保持穩定飲食並依 TSH 調整。"
         }
       ]
     },
@@ -1595,7 +1658,7 @@
         {
           "id": "digoxin",
           "level": "moderate",
-          "note": "大量甘草會造成低血鉀，增加毛地黃中毒風險。"
+          "note": "大量甘草會造成低血鉀，增加 digitalis 中毒風險。"
         },
         {
           "id": "losartan",

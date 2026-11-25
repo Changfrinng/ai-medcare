@@ -61,7 +61,7 @@ class SafetyRequest(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    question: str = Field(examples=["華法林可以吃葡萄柚嗎？"])
+    question: str = Field(examples=["Warfarin 可以吃葡萄柚嗎？"])
     drug_id: Optional[str] = None
 
 
@@ -156,7 +156,7 @@ INTENTS = {
 def retrieve(question: str, drug_id: Optional[str]) -> list[dict]:
     """RAG 檢索：找出問題提及的藥物，回傳相關衛教段落（含來源）。"""
     q = question.lower()
-    hits = [d for d in DRUGS.values() if d["zh"].split("（")[0] in question or d["en"].split(" ")[0].lower() in q]
+    hits = [d for d in DRUGS.values() if d["en"].split(" ")[0].lower() in q or any(a in question for a in d.get("aliases", []))]
     if not hits and drug_id in DRUGS:
         hits = [DRUGS[drug_id]]
     passages = []
@@ -183,7 +183,7 @@ def health():
 @app.get("/api/drugs")
 def list_drugs(q: str = ""):
     ql = q.lower()
-    items = [d for d in DRUGS.values() if not ql or ql in " ".join([d["zh"], d["en"], d["brand"], d["license"], d["imprint"], d["klass"]]).lower()]
+    items = [d for d in DRUGS.values() if not ql or ql in " ".join([d["zh"], d["en"], d["brand"], *d.get("aliases", []), d["license"], d["imprint"], d["klass"]]).lower()]
     return [{k: d[k] for k in ("id", "zh", "en", "strength", "license", "nhi", "klass", "color", "shape", "imprint", "highAlert")} for d in items]
 
 
@@ -256,7 +256,7 @@ def fhir_medication_knowledge(drug_id: str):
     return {
         "resourceType": "MedicationKnowledge", "id": d["id"], "status": "active",
         "code": {"coding": [{"system": "urn:tw:nhi:drug-code", "code": d["nhi"]}], "text": f"{d['en']} {d['strength']}"},
-        "synonym": [d["zh"], d["brand"]],
+        "synonym": [d["en"], d["brand"]],
         "doseForm": {"text": d["form"]},
         "drugCharacteristic": [
             {"type": {"text": "color"}, "valueString": "/".join(d["color"])},
